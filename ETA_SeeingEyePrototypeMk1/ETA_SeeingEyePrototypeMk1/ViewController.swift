@@ -53,8 +53,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             fatalError("No image selected, and yet a picture was taken.")
         case 1:
             firstImage.image = selectedImage
+            self.firstYaw.text = String(format:"Yaw = %f", self.yawVal)
+            self.firstPitch.text = String(format:"Pitch = %f", self.pitchVal)
+            self.firstRoll.text = String(format:"Roll = %f", self.rollVal)
         case 2:
             secondImage.image = selectedImage
+            self.secondYaw.text = String(format:"Yaw = %f", self.yawVal)
+            self.secondPitch.text = String(format:"Pitch = %f", self.pitchVal)
+            self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
@@ -65,7 +71,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     //MARK: Actions
     
-    @IBAction func captureFirstPhoto(_ sender: Any) {
+    /*@IBAction func captureFirstPhoto(_ sender: UITapGestureRecognizer) {
         chosenPicture = 1
         self.firstYaw.text = String(format:"Yaw = %f", self.yawVal)
         self.firstPitch.text = String(format:"Pitch = %f", self.pitchVal)
@@ -73,11 +79,26 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         capturePhoto()
     }
     
-    @IBAction func captureSecondPhoto(_ sender: Any) {
+    @IBAction func captureSecondPhoto(_ sender: UITapGestureRecognizer) {
         chosenPicture = 2
         self.secondYaw.text = String(format:"Yaw = %f", self.yawVal)
         self.secondPitch.text = String(format:"Pitch = %f", self.pitchVal)
         self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
+        capturePhoto()
+    }*/
+    
+    @IBAction func takePictureButtonPressed(_ sender: UIButton) {
+        switch chosenPicture {
+        case 0:
+            chosenPicture = 1
+        case 1:
+            chosenPicture = 2
+        case 2:
+            chosenPicture = 1
+        default:
+            fatalError("Expected chosenPicture to be updated with the picture chosen.")
+        }
+        
         capturePhoto()
     }
     
