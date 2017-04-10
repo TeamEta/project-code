@@ -14,6 +14,7 @@
 		5977B9601E98394400E1A65E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5977B95E1E98394400E1A65E /* LaunchScreen.storyboard */; };
 		5977B96B1E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B96A1E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests.swift */; };
 		5977B9761E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9751E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift */; };
+		75DB6F8F1E9C458E00E5F1D6 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,9 @@
 		5977B9711E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ETA_SeeingEyePrototypeMk1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5977B9751E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ETA_SeeingEyePrototypeMk1UITests.swift; sourceTree = "<group>"; };
 		5977B9771E98394400E1A65E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		75DB6F901E9C459800E5F1D6 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
+		75DB6F911E9C45A500E5F1D6 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +81,9 @@
 		5977B9491E98394400E1A65E = {
 			isa = PBXGroup;
 			children = (
+				75DB6F911E9C45A500E5F1D6 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */,
+				75DB6F901E9C459800E5F1D6 /* OpenCVWrapper.h */,
+				75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */,
 				5977B9541E98394400E1A65E /* ETA_SeeingEyePrototypeMk1 */,
 				5977B9691E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests */,
 				5977B9741E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests */,
@@ -194,6 +201,7 @@
 					5977B9511E98394400E1A65E = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 7Z42KAVL8N;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 					5977B9651E98394400E1A65E = {
@@ -264,6 +272,7 @@
 			files = (
 				5977B9581E98394400E1A65E /* ViewController.swift in Sources */,
 				5977B9561E98394400E1A65E /* AppDelegate.swift in Sources */,
+				75DB6F8F1E9C458E00E5F1D6 /* OpenCVWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,11 +424,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 7Z42KAVL8N;
 				INFOPLIST_FILE = ETA_SeeingEyePrototypeMk1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ServantEngineeringETA.ETA-SeeingEyePrototypeMk1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -428,11 +440,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 7Z42KAVL8N;
 				INFOPLIST_FILE = ETA_SeeingEyePrototypeMk1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "ServantEngineeringETA.ETA-SeeingEyePrototypeMk1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -514,6 +528,7 @@
 				5977B97C1E98394400E1A65E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5977B97D1E98394400E1A65E /* Build configuration list for PBXNativeTarget "ETA_SeeingEyePrototypeMk1Tests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +537,7 @@
 				5977B97F1E98394400E1A65E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5977B9801E98394400E1A65E /* Build configuration list for PBXNativeTarget "ETA_SeeingEyePrototypeMk1UITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +546,7 @@
 				5977B9821E98394400E1A65E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
