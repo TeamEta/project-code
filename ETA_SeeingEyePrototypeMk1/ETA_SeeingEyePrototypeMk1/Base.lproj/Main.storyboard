@@ -32,9 +32,6 @@
                                             <constraint firstAttribute="height" constant="200" id="AqP-XQ-SoE"/>
                                             <constraint firstAttribute="width" constant="150" id="tEc-VN-o6z"/>
                                         </constraints>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="Mij-VJ-fso" appends="YES" id="VVz-zP-OuF"/>
-                                        </connections>
                                     </imageView>
                                     <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="defaultPhoto" translatesAutoresizingMaskIntoConstraints="NO" id="js2-QV-pid">
                                         <rect key="frame" x="158" y="0.0" width="150" height="200"/>
@@ -42,28 +39,25 @@
                                         <constraints>
                                             <constraint firstAttribute="width" constant="150" id="B3v-Fq-948"/>
                                         </constraints>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="und-xm-MXF" appends="YES" id="8f9-IU-o2u"/>
-                                        </connections>
                                     </imageView>
                                 </subviews>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Yaw:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCg-9p-l8P">
-                                <rect key="frame" x="16" y="343" width="110" height="21"/>
+                                <rect key="frame" x="16" y="343" width="122" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Pitch:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZTf-A6-f4X">
-                                <rect key="frame" x="16" y="390" width="110" height="21"/>
+                                <rect key="frame" x="16" y="390" width="122" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Roll:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xsz-VM-5nL">
-                                <rect key="frame" x="16" y="437" width="110" height="21"/>
+                                <rect key="frame" x="16" y="437" width="122" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -135,16 +129,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="Mij-VJ-fso">
-                    <connections>
-                        <action selector="captureFirstPhoto:" destination="BYZ-38-t0r" id="WIQ-oS-kJG"/>
-                    </connections>
-                </tapGestureRecognizer>
-                <tapGestureRecognizer id="und-xm-MXF">
-                    <connections>
-                        <action selector="captureSecondPhoto:" destination="BYZ-38-t0r" id="zsa-mh-nyQ"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-80.625" y="138.38028169014083"/>
         </scene>
