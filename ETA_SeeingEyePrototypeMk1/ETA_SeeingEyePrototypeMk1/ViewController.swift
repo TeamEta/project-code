@@ -115,7 +115,25 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             {
                 deltaYaw = abs(-1*firstYawVal + secondYawVal)
             }
-            self.distanceToClosest.text = String(format:"%.3f", self.deltaYaw)
+            
+            if ((firstPitchVal > 0 && secondPitchVal > 0) || (firstPitchVal < 0 && secondPitchVal < 0))
+            {
+                deltaPitch = abs(firstPitchVal - secondPitchVal)
+            }
+            else
+            {
+                deltaPitch = abs(-1*firstPitchVal + secondPitchVal)
+            }
+            
+            if ((firstRollVal > 0 && secondRollVal > 0) || (firstRollVal < 0 && secondRollVal < 0))
+            {
+                deltaRoll = abs(firstRollVal - secondRollVal)
+            }
+            else
+            {
+                deltaRoll = abs(-1*firstRollVal + secondRollVal)
+            }
+            self.distanceToClosest.text = String(format:"%.3f", self.deltaRoll)
 
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
