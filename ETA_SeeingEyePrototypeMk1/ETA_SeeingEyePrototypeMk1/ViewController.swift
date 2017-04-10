@@ -27,6 +27,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     @IBOutlet weak var secondPitch: UILabel!
     @IBOutlet weak var secondRoll: UILabel!
     
+    @IBOutlet weak var deltaX: UILabel!
+    @IBOutlet weak var distanceToClosest: UILabel!
+    
     var picturePicker: UIImagePickerController!
     
     var yawVal: Double = 0.0
