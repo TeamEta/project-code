@@ -31,6 +31,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var pitchVal: Double = 0.0
     var rollVal: Double = 0.0
     
+    
+    var nSamples = 50
+    var mVariance = 0.175/2
+    var gyroSamples = Array<Double> ()
+    var stable = false;
+    
     var chosenPicture: Int = 0
     
     //MARK: UIImagePickerControllerDelegate
@@ -144,6 +150,67 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
                 self.pitchVal = (self.manager.deviceMotion?.attitude.pitch)!
                 self.rollVal = (self.manager.deviceMotion?.attitude.roll)!
+                
+                let yaw = self.yawVal;
+                
+                
+                self.gyroSamples.append(yaw)
+                if(self.gyroSamples.count > self.nSamples)
+                {
+                    self.gyroSamples.remove(at: 0)
+                }
+                var sMax = abs(self.gyroSamples[0])
+                var sMin = abs(self.gyroSamples[0])
+                var avg = 0.0
+                
+                var o = 0.0
+                for i in self.gyroSamples
+                {
+                    o = i
+                    if (o<0)
+                    {
+                        o = -o;
+                    }
+                    if(o>sMax)
+                    {
+                        sMax = o
+                    }
+                    if(o<sMin)
+                    {
+                        sMin = o
+                    }
+                    avg = (avg+i)/2
+                }
+                
+                
+                let variance = sMax-sMin;
+                if (variance < self.mVariance)
+                {
+                    self.stable = true
+                }
+                else
+                {
+                    self.stable = false
+                }
+                
+                /*if(!self.stable)
+                {
+                    
+                    
+                    self.gyroRawX.text = String(format:"high: %f low: %f", sMax, sMin)
+                }
+                else
+                {
+                    if(self.picturePicker != nil)
+                    {
+                        if(self.picturePicker.isViewLoaded)
+                        {
+                            self.picturePicker.takePicture()
+                        }
+                    }
+                    
+                    self.gyroRawX.text = String(format:"Yaw = %f : Stable", yaw)
+                }*/
                 //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )
