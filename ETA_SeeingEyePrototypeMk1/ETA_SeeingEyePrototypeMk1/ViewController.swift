@@ -27,6 +27,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     @IBOutlet weak var secondPitch: UILabel!
     @IBOutlet weak var secondRoll: UILabel!
     
+    var picturePicker: UIImagePickerController!
+    
     var yawVal: Double = 0.0
     var pitchVal: Double = 0.0
     var rollVal: Double = 0.0
@@ -36,6 +38,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var mVariance = 0.175/2
     var gyroSamples = Array<Double> ()
     var stable = false;
+    
+    var avgyaw = 0.0;
+    
+    var distance = 0.0;
+    var arm = 0.309245;
     
     var chosenPicture: Int = 0
     
@@ -124,6 +131,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             imagePicker.cameraCaptureMode = .photo
             imagePicker.modalPresentationStyle = .fullScreen
+            imagePicker.showsCameraControls = false;
+            self.picturePicker = imagePicker;
             
             self.present(imagePicker, animated: true, completion: nil)
             //imagePicker.takePicture()
@@ -193,11 +202,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                     self.stable = false
                 }
                 
-                /*if(!self.stable)
+                if(!self.stable)
                 {
                     
                     
-                    self.gyroRawX.text = String(format:"high: %f low: %f", sMax, sMin)
+                    //self.gyroRawX.text = String(format:"high: %f low: %f", sMax, sMin)
                 }
                 else
                 {
@@ -209,8 +218,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                         }
                     }
                     
-                    self.gyroRawX.text = String(format:"Yaw = %f : Stable", yaw)
-                }*/
+                    //self.gyroRawX.text = String(format:"Yaw = %f : Stable", yaw)
+                }
                 //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )
