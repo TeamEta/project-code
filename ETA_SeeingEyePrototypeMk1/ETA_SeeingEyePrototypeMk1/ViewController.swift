@@ -53,14 +53,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             fatalError("No image selected, and yet a picture was taken.")
         case 1:
             firstImage.image = selectedImage
-            self.firstYaw.text = String(format:"Yaw = %f", self.yawVal)
-            self.firstPitch.text = String(format:"Pitch = %f", self.pitchVal)
-            self.firstRoll.text = String(format:"Roll = %f", self.rollVal)
+            self.firstYaw.text = String(format:"Yaw = %.3f", self.yawVal)
+            self.firstPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
+            self.firstRoll.text = String(format:"Roll = %.3f", self.rollVal)
         case 2:
             secondImage.image = selectedImage
-            self.secondYaw.text = String(format:"Yaw = %f", self.yawVal)
-            self.secondPitch.text = String(format:"Pitch = %f", self.pitchVal)
-            self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
+            self.secondYaw.text = String(format:"Yaw = %.3f", self.yawVal)
+            self.secondPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
+            self.secondRoll.text = String(format:"Roll = %.3f", self.rollVal)
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
@@ -144,7 +144,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
                 self.pitchVal = (self.manager.deviceMotion?.attitude.pitch)!
                 self.rollVal = (self.manager.deviceMotion?.attitude.roll)!
-                //self.firstYaw.text = String(format:"Yaw = %f", (self.manager.deviceMotion?.attitude.yaw)!)
+                //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )
 
