@@ -38,7 +38,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     
     var nSamples = 50
-    var mVariance = 0.175/2
+    var mVariance = 0.175
     var gyroSamples = Array<Double> ()
     var stable = false;
     
@@ -81,8 +81,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.secondPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
             self.secondRoll.text = String(format:"Roll = %.3f", self.rollVal)
             self.avgYaw2 = self.avg;
-            distance = sqrt(abs(arm*arm-4*arm*cos(angle)));
-            
+            distance = sqrt(abs(2*arm*arm-2*arm*arm*cos(angle)));
+            self.deltaX.text = String(format:"DeltaX = %.3f, %0.3f", self.distance, angle)
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
