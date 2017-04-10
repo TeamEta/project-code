@@ -42,7 +42,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var gyroSamples = Array<Double> ()
     var stable = false;
     
-    var avgyaw = 0.0;
+    var avgYaw1 = 0.0;
+    var avgYaw2 = 0.0;
+    var avg = 0.0;
     
     var distance = 0.0;
     var arm = 0.309245;
@@ -63,7 +65,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         guard let selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
-        
+        let angle = self.avgYaw2 - self.avgYaw1;
         switch chosenPicture {
         case 0:
             fatalError("No image selected, and yet a picture was taken.")
@@ -72,11 +74,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.firstYaw.text = String(format:"Yaw = %.3f", self.yawVal)
             self.firstPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
             self.firstRoll.text = String(format:"Roll = %.3f", self.rollVal)
+            self.avgYaw1 = self.avg;
         case 2:
             secondImage.image = selectedImage
             self.secondYaw.text = String(format:"Yaw = %.3f", self.yawVal)
             self.secondPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
             self.secondRoll.text = String(format:"Roll = %.3f", self.rollVal)
+            self.avgYaw2 = self.avg;
+            distance = sqrt(abs(arm*arm-4*arm*cos(angle)));
+            
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
@@ -193,7 +199,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                     }
                     avg = (avg+i)/2
                 }
-                
+                self.avg = avg;
                 
                 let variance = sMax-sMin;
                 if (variance < self.mVariance)
