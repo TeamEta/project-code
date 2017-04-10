@@ -36,6 +36,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var pitchVal: Double = 0.0
     var rollVal: Double = 0.0
     
+    var firstYawVal: Double = 0.0
+    var firstPitchVal: Double = 0.0
+    var firstRollVal: Double = 0.0
+    
+    var secondYawVal: Double = 0.0
+    var secondPitchVal: Double = 0.0
+    var secondRollVal: Double = 0.0
+    
+    var deltaYaw: Double = 0.0
+    var deltaPitch: Double = 0.0
+    var deltaRoll: Double = 0.0
     
     var nSamples = 50
     var mVariance = 0.175
@@ -71,18 +82,41 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             fatalError("No image selected, and yet a picture was taken.")
         case 1:
             firstImage.image = selectedImage
-            self.firstYaw.text = String(format:"Yaw = %.3f", self.yawVal)
-            self.firstPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
-            self.firstRoll.text = String(format:"Roll = %.3f", self.rollVal)
+            
+            self.firstYawVal = self.yawVal
+            self.firstPitchVal = self.pitchVal
+            self.firstRollVal = self.rollVal
+            
+            self.firstYaw.text = String(format:"Yaw = %.3f", self.firstYawVal)
+            self.firstPitch.text = String(format:"Pitch = %.3f", self.firstPitchVal)
+            self.firstRoll.text = String(format:"Roll = %.3f", self.firstRollVal)
             self.avgYaw1 = self.avg;
         case 2:
             secondImage.image = selectedImage
-            self.secondYaw.text = String(format:"Yaw = %.3f", self.yawVal)
-            self.secondPitch.text = String(format:"Pitch = %.3f", self.pitchVal)
-            self.secondRoll.text = String(format:"Roll = %.3f", self.rollVal)
+            
+            self.secondYawVal = self.yawVal
+            self.secondPitchVal = self.pitchVal
+            self.secondRollVal = self.rollVal
+            
+            self.secondYaw.text = String(format:"Yaw = %.3f", self.secondYawVal)
+            self.secondPitch.text = String(format:"Pitch = %.3f", self.secondPitchVal)
+            self.secondRoll.text = String(format:"Roll = %.3f", self.secondRollVal)
+            
             self.avgYaw2 = self.avg;
+            
             distance = sqrt(abs(2*arm*arm-2*arm*arm*cos(angle)));
             self.deltaX.text = String(format:"DeltaX = %.3f, %0.3f", self.distance, angle)
+            
+            if ((firstYawVal > 0 && secondYawVal > 0) || (firstYawVal < 0 && secondYawVal < 0))
+            {
+                deltaYaw = abs(firstYawVal - secondYawVal)
+            }
+            else
+            {
+                deltaYaw = abs(-1*firstYawVal + secondYawVal)
+            }
+            self.distanceToClosest.text = String(format:"%.3f", self.deltaYaw)
+
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
@@ -168,6 +202,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
                 self.pitchVal = (self.manager.deviceMotion?.attitude.pitch)!
                 self.rollVal = (self.manager.deviceMotion?.attitude.roll)!
+
                 
                 let yaw = self.yawVal;
                 
