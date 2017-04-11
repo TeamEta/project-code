@@ -211,6 +211,23 @@ int max_y;
     delete (cv::Mat*) thing;
 }
 
++(UIImage *) transformImage: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll
+{
+    cv::Matx33d mPitch(1,0,0,0, cos(pitch), -sin(pitch), 0, sin(pitch), cos(pitch));
+    cv::Matx33d mYaw(cos(yaw), 0, sin(yaw), 0,1,0, -sin(yaw), 0, cos(yaw));
+    cv::Matx33d mRoll(cos(roll), -sin(roll), 0, sin(roll), cos(roll), 0, 0, 0, 1);
+    
+    cv::Matx33d rotation =  mYaw * (mPitch * mRoll);
+    
+    cv::Mat source;
+    cv::Mat result;
+    
+    UIImageToMat(image, source);
+    cv::warpPerspective(source, result, rotation, Size2i(2000,2000));
+    
+    return MatToUIImage(result);
+}
+
 @end
 
 
