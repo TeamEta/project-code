@@ -38,6 +38,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var pitchVal: Double = 0.0
     var rollVal: Double = 0.0
     
+    var sYaw: Double = 1.0;
+    var sPitch: Double = 1.0;
+    var sRoll: Double = 1.0;
+    
+    
     var firstYawVal: Double = 0.0
     var firstPitchVal: Double = 0.0
     var firstRollVal: Double = 0.0
@@ -116,7 +121,45 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
             deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
             
-            secondImage.image = OpenCVWrapper.transform_Image(selectedImage, yaw: 0, pitch: 0, roll: 0)
+            if(self.firstYawVal < self.secondYawVal)
+            {
+                self.sYaw = 1.0;
+            }
+            else
+            {
+                self.sYaw = -1.0;
+            }
+            
+            if(self.firstRollVal < self.secondRollVal)
+            {
+                self.sRoll = 1.0;
+            }
+            else
+            {
+                self.sRoll = -1.0;
+            }
+            
+            if(self.firstPitchVal < self.secondPitchVal)
+            {
+                self.sPitch = -1.0;
+            }
+            else
+            {
+                self.sPitch = 1.0;
+            }
+            
+            firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
+            secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
+            
+            var disp_map : UnsafeMutableRawPointer;
+            if(self.sPitch < 0)
+            {
+                disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
+            }
+            else
+            {
+                disp_map = OpenCVWrapper.solveDisparity(secondImage.image, imageRight: firstImage.image);
+            }
 
             /*
             if ((firstYawVal > 0 && secondYawVal > 0) // both positive
@@ -172,7 +215,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 firstRollVal += 2*M_PI
                 deltaRoll = abs(firstRollVal - secondRollVal)
             }*/
-            self.distanceToClosest.text = String(format:"%.3f", self.deltaRoll)
+            self.distanceToClosest.text = String(format:"%.3f", OpenCVWrapper.get_max_disparity(disp_map))
+            //secondImage.image = OpenCVWrapper.get_image(disp_map);
 
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
@@ -241,7 +285,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         }
     }
 
-    
+    func captureDidLoad()
+    {
+        self.picturePicker.takePicture()
+    }
     
     //MARK: Navigation
     
@@ -255,6 +302,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
+        
         manager.deviceMotionUpdateInterval = 0.1
         manager.startDeviceMotionUpdates(to: OperationQueue.main, withHandler:
             {deviceManager, error in
@@ -315,10 +364,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 {
                     if(self.picturePicker != nil)
                     {
-                        if(self.picturePicker.isViewLoaded)// && self.timeToCapture)
+                        if(self.picturePicker.isViewLoaded && self.timeToCapture)
                         {
-                            self.picturePicker.takePicture()
+                            
                             self.timeToCapture = false
+                            
+                            Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.captureDidLoad), userInfo: nil, repeats: false);
                         }
                     }
                     

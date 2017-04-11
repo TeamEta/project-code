@@ -33,6 +33,7 @@
 //frees up the memory from creating a cv::Mat
 +(void) destroy_mat: (void *) thing;
 
-+(UIImage *) transform_Image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll;
++(UIImage *) transform_image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll;
+
 
 @end

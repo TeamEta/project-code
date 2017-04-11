@@ -42,11 +42,12 @@ void rotateImage(const Mat &input, Mat &output, double alpha, double beta, doubl
 
 {
     
-    alpha = (alpha - 90.)*CV_PI/180.;
-    
-    beta = (beta - 90.)*CV_PI/180.;
-    
-    gamma = (gamma - 90.)*CV_PI/180.;
+    //alpha = (alpha)*CV_PI/180.;
+    //alpha = CV_PI/2.-alpha;
+    //beta = (beta)*CV_PI/180.;
+    //beta = beta-CV_PI/2;
+    //gamma = (gamma)*CV_PI/180.;
+    gamma = gamma+CV_PI/2;
     
     // get width and height for ease of use in matrices
     
@@ -116,21 +117,29 @@ void rotateImage(const Mat &input, Mat &output, double alpha, double beta, doubl
     
     // 3D -> 2D matrix
     
+    /*Mat A2 = (Mat_<double>(3,4) <<
+              
+              f, 0, w/2, 0,
+              
+              0, f, h/2, 0,
+              
+              0, 0,   1, 0);*/
+    
     Mat A2 = (Mat_<double>(3,4) <<
               
-              h/3, 0, w/2, 0,
+              f, 0, w/2, 0,
               
-              0, h/3, h/2, 0,
+              0, f, h/2, 0,
               
               0, 0,   1, 0);
     
     // Final transformation matrix
     
-    Mat trans = A2 * (T * (R * A1));
+    Mat trans = A2*(T * (R * A1));
     
     // Apply matrix transformation
     
-    warpPerspective(input, output, trans, input.size(), INTER_LANCZOS4);
+    warpPerspective(input, output, trans, Size2i(input.cols, input.rows));
     
 }
 
@@ -163,23 +172,23 @@ int max_y;
     cv::cvtColor(right, right_gray, CV_BGR2GRAY);
     
     //how many pixels in a square to match
-    int window_size = 101;
+    int window_size = 5;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
     cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(256, window_size);
 
-    //all of the below values have to do with pre filtering out noise
+/*    //all of the below values have to do with pre filtering out noise
     sbm->setPreFilterCap(61);
     sbm->setPreFilterSize(15);
     sbm->setMinDisparity(-39);
     
     sbm->setTextureThreshold(1000);
     sbm->setUniquenessRatio(5);
-    sbm->setSpeckleWindowSize(500);
+    sbm->setSpeckleWindowSize(10);
     sbm->setSpeckleRange(1);
     
-    sbm->setDisp12MaxDiff(0);
+    sbm->setDisp12MaxDiff(0);*/
     
     //compute the actual disparities
     sbm->compute(left_gray, right_gray, *disp);
@@ -287,6 +296,7 @@ int max_y;
         }
     }
     
+    
     return maxim;
 }
 
@@ -309,7 +319,8 @@ int max_y;
 
 
 
-+(UIImage *) transform_Image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll
+
+/*+(UIImage *) transform_Image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll
 {
     cv::Mat source;
     cv::Mat result;
@@ -333,13 +344,71 @@ int max_y;
     cv::Mat A1 = (Mat_<double>(3,3) <<
                   1, 0, -w/2,
                   0, 1, -h/2,
-                  0, 0, 1);
+                  0, 0, 1);*/
+
++(UIImage *) transform_image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll
+{
+    cv::Mat source, result;
+    UIImageToMat(image, source);
+    /*
+    Point2f inputQuad[4];
+    Point2f outputQuad[4];
     
-    cv::Mat source;
+    Mat transform;
+    
+    cv::Matx44d mPitch(1,        0,          0,           0,
+                       0,        cos(pitch), -sin(pitch), 0,
+                       0,        sin(pitch), cos(pitch),  0,
+                       0,        0,          0,           1);
+    
+    cv::Matx44d mYaw( cos(yaw),  0,          sin(yaw),    0,
+                      0,         1,          0,           0,
+                      -sin(yaw), 0,          cos(yaw),    0,
+                      0,         0,          0,           1
+                     );
+    cv::Matx44d mRoll(cos(roll), -sin(roll), 0,           0,
+                      sin(roll), cos(roll),  0,           0,
+                      0,         0,          1,           0,
+                      0,         0,          0,           1);
+    
+    cv::Matx44d center(1,         0,          0,           -(source.cols-1),
+                      0,         1,          0,           -(source.rows-1),
+                      0,         0,          1,           0,
+                      0,         0,          0,           1);
+    
+    cv::Matx44d rotation =  (mYaw * (mPitch * mRoll));
+    
+    
     cv::Mat result;
     
-    UIImageToMat(image, source);
-    cv::warpPerspective(source, result, rotation, Size2i(2000,2000));*/
+    outputQuad[0] = Point2f(0,0);
+    outputQuad[1] = Point2f(source.cols-1,0);
+    outputQuad[2] = Point2f(source.cols-1,source.rows);
+    outputQuad[3] = Point2f(0,0);
+    
+    
+    cv::Matx14d point1(-(source.cols-1)/2, (source.rows-1)/2, 0, 1);
+    cv::Matx14d point2(-(source.cols-1)/2, (source.rows-1)/2, 0, 1);
+    cv::Matx14d point3(-(source.cols-1)/2, (source.rows-1)/2, 0, 1);
+    cv::Matx14d point4(-(source.cols-1)/2, (source.rows-1)/2, 0, 1);
+    
+    point1 = point1 * rotation;
+    point2 = point2 * rotation;
+    point3 = point3 * rotation;
+    point4 = point4 * rotation;
+    
+    inputQuad[0] = Point2f(point1.val[0], point1.val[1]);
+    inputQuad[1] = Point2f(point2.val[0], point2.val[1]);
+    inputQuad[2] = Point2f(point3.val[0], point3.val[1]);
+    inputQuad[3] = Point2f(point4.val[0], point4.val[1]);
+    
+    Mat trans = cv::getPerspectiveTransform(outputQuad, inputQuad);*/
+    Mat trans;
+    rotateImage(source, result, pitch, yaw, roll, 0, 0, 1000, 1000);
+    
+    
+    //cv::warpPerspective(source, result, trans, Size2i(2000,2000));
+
     
     return MatToUIImage(result);
 }
