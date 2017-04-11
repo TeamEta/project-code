@@ -78,6 +78,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         guard let selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
+        
+        
+        
         let angle = self.avgYaw2 - self.avgYaw1;
         switch chosenPicture {
         case 0:
@@ -113,6 +116,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
             deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
             
+            secondImage.image = OpenCVWrapper.transform_Image(selectedImage, yaw: 0, pitch: 0, roll: 0)
+
             /*
             if ((firstYawVal > 0 && secondYawVal > 0) // both positive
                 || (firstYawVal < 0 && secondYawVal < 0) // both negative
@@ -310,7 +315,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 {
                     if(self.picturePicker != nil)
                     {
-                        if(self.picturePicker.isViewLoaded && self.timeToCapture)
+                        if(self.picturePicker.isViewLoaded)// && self.timeToCapture)
                         {
                             self.picturePicker.takePicture()
                             self.timeToCapture = false
