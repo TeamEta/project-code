@@ -109,7 +109,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             distance = sqrt(abs(2*arm*arm-2*arm*arm*cos(angle)));
             self.deltaX.text = String(format:"DeltaX = %.3f, %0.3f", self.distance, angle)
             
-            if ((firstYawVal > 0 && secondYawVal > 0) || (firstYawVal < 0 && secondYawVal < 0))
+            deltaYaw = acos(cos(firstYawVal)*cos(secondYawVal) + sin(firstYawVal)*sin(secondYawVal))
+            deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
+            deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
+            
+            /*
+            if ((firstYawVal > 0 && secondYawVal > 0) // both positive
+                || (firstYawVal < 0 && secondYawVal < 0) // both negative
+                || (firstYawVal > 0 && firstYawVal < M_PI_2 && secondYawVal > -M_PI_2) // between PI/2 and -PI/2
+                || (secondYawVal > 0 && secondYawVal < M_PI_2 && firstYawVal > -M_PI_2))
             {
                 deltaYaw = abs(firstYawVal - secondYawVal)
             }
@@ -124,7 +132,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 deltaYaw = abs(firstYawVal - secondYawVal)
             }
             
-            if ((firstPitchVal > 0 && secondPitchVal > 0) || (firstPitchVal < 0 && secondPitchVal < 0))
+            if ((firstPitchVal > 0 && secondPitchVal > 0) // both positive
+                || (firstPitchVal < 0 && secondPitchVal < 0) // both negative
+                || (firstPitchVal > 0 && firstPitchVal < M_PI_2 && secondPitchVal > -M_PI_2) // between PI/2 and -PI/2
+                || (secondPitchVal > 0 && secondPitchVal < M_PI_2 && firstPitchVal > -M_PI_2))
             {
                 deltaPitch = abs(firstPitchVal - secondPitchVal)
             }
@@ -139,7 +150,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 deltaPitch = abs(firstPitchVal - secondPitchVal)
             }
             
-            if ((firstRollVal > 0 && secondRollVal > 0) || (firstRollVal < 0 && secondRollVal < 0))
+            if ((firstRollVal > 0 && secondRollVal > 0) // both positive
+                || (firstRollVal < 0 && secondRollVal < 0) // both negative
+                || (firstRollVal > 0 && firstRollVal < M_PI_2 && secondRollVal > -M_PI_2) // between PI/2 and -PI/2
+                || (secondRollVal > 0 && secondRollVal < M_PI_2 && firstRollVal > -M_PI_2))
             {
                 deltaRoll = abs(firstRollVal - secondRollVal)
             }
@@ -152,7 +166,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             {
                 firstRollVal += 2*M_PI
                 deltaRoll = abs(firstRollVal - secondRollVal)
-            }
+            }*/
             self.distanceToClosest.text = String(format:"%.3f", self.deltaRoll)
 
         default:
