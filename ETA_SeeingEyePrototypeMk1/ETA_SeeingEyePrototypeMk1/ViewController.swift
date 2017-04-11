@@ -32,6 +32,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     var picturePicker: UIImagePickerController!
     
+    var timeToCapture: Bool = false
+    
     var yawVal: Double = 0.0
     var pitchVal: Double = 0.0
     var rollVal: Double = 0.0
@@ -111,27 +113,45 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             {
                 deltaYaw = abs(firstYawVal - secondYawVal)
             }
+            else if (firstYawVal > 0 && secondYawVal < 0)
+            {
+                secondYawVal += 2*M_PI
+                deltaYaw = abs(firstYawVal - secondYawVal)
+            }
             else
             {
-                deltaYaw = abs(-1*firstYawVal + secondYawVal)
+                firstYawVal += 2*M_PI
+                deltaYaw = abs(firstYawVal - secondYawVal)
             }
             
             if ((firstPitchVal > 0 && secondPitchVal > 0) || (firstPitchVal < 0 && secondPitchVal < 0))
             {
                 deltaPitch = abs(firstPitchVal - secondPitchVal)
             }
+            else if (firstPitchVal > 0 && secondPitchVal < 0)
+            {
+                secondPitchVal += 2*M_PI
+                deltaPitch = abs(firstPitchVal - secondPitchVal)
+            }
             else
             {
-                deltaPitch = abs(-1*firstPitchVal + secondPitchVal)
+                firstPitchVal += 2*M_PI
+                deltaPitch = abs(firstPitchVal - secondPitchVal)
             }
             
             if ((firstRollVal > 0 && secondRollVal > 0) || (firstRollVal < 0 && secondRollVal < 0))
             {
                 deltaRoll = abs(firstRollVal - secondRollVal)
             }
+            else if (firstRollVal > 0 && secondRollVal < 0)
+            {
+                secondRollVal += 2*M_PI
+                deltaRoll = abs(firstRollVal - secondRollVal)
+            }
             else
             {
-                deltaRoll = abs(-1*firstRollVal + secondRollVal)
+                firstRollVal += 2*M_PI
+                deltaRoll = abs(firstRollVal - secondRollVal)
             }
             self.distanceToClosest.text = String(format:"%.3f", self.deltaRoll)
 
@@ -172,6 +192,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
+        
+        self.timeToCapture = true
         
         capturePhoto()
     }
@@ -274,9 +296,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 {
                     if(self.picturePicker != nil)
                     {
-                        if(self.picturePicker.isViewLoaded)
+                        if(self.picturePicker.isViewLoaded && self.timeToCapture)
                         {
                             self.picturePicker.takePicture()
+                            self.timeToCapture = false
                         }
                     }
                     

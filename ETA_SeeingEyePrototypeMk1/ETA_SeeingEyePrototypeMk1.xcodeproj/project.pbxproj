@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		595458A11E9C54BC00CA7389 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595458A01E9C54BC00CA7389 /* opencv2.framework */; };
+		595458A41E9C54D900CA7389 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 595458A31E9C54D900CA7389 /* OpenCVWrapper.mm */; };
 		5977B9561E98394400E1A65E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9551E98394400E1A65E /* AppDelegate.swift */; };
 		5977B9581E98394400E1A65E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9571E98394400E1A65E /* ViewController.swift */; };
 		5977B95B1E98394400E1A65E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5977B9591E98394400E1A65E /* Main.storyboard */; };
@@ -14,7 +16,6 @@
 		5977B9601E98394400E1A65E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5977B95E1E98394400E1A65E /* LaunchScreen.storyboard */; };
 		5977B96B1E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B96A1E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests.swift */; };
 		5977B9761E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9751E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift */; };
-		75DB6F8F1E9C458E00E5F1D6 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,6 +36,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		595458A01E9C54BC00CA7389 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		595458A21E9C54D000CA7389 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
+		595458A31E9C54D900CA7389 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
+		595458A51E9C54DF00CA7389 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h"; sourceTree = "<group>"; };
 		5977B9521E98394400E1A65E /* ETA_SeeingEyePrototypeMk1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ETA_SeeingEyePrototypeMk1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5977B9551E98394400E1A65E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5977B9571E98394400E1A65E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -48,9 +53,6 @@
 		5977B9711E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ETA_SeeingEyePrototypeMk1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5977B9751E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ETA_SeeingEyePrototypeMk1UITests.swift; sourceTree = "<group>"; };
 		5977B9771E98394400E1A65E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
-		75DB6F901E9C459800E5F1D6 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
-		75DB6F911E9C45A500E5F1D6 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				595458A11E9C54BC00CA7389 /* opencv2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,9 +84,10 @@
 		5977B9491E98394400E1A65E = {
 			isa = PBXGroup;
 			children = (
-				75DB6F911E9C45A500E5F1D6 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */,
-				75DB6F901E9C459800E5F1D6 /* OpenCVWrapper.h */,
-				75DB6F8E1E9C458E00E5F1D6 /* OpenCVWrapper.mm */,
+				595458A01E9C54BC00CA7389 /* opencv2.framework */,
+				595458A51E9C54DF00CA7389 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */,
+				595458A21E9C54D000CA7389 /* OpenCVWrapper.h */,
+				595458A31E9C54D900CA7389 /* OpenCVWrapper.mm */,
 				5977B9541E98394400E1A65E /* ETA_SeeingEyePrototypeMk1 */,
 				5977B9691E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests */,
 				5977B9741E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests */,
@@ -272,7 +276,7 @@
 			files = (
 				5977B9581E98394400E1A65E /* ViewController.swift in Sources */,
 				5977B9561E98394400E1A65E /* AppDelegate.swift in Sources */,
-				75DB6F8F1E9C458E00E5F1D6 /* OpenCVWrapper.mm in Sources */,
+				595458A41E9C54D900CA7389 /* OpenCVWrapper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
