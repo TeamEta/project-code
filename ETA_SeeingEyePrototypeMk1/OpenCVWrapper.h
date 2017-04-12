@@ -35,5 +35,10 @@
 
 +(UIImage *) transform_image: (UIImage*) image yaw:(double) yaw pitch:(double) pitch roll:(double) roll;
 
++(int) get_max_x;
+
++(int) get_max_y;
+
++(double) calculate_rectification: (UIImage *) image1 image2:(UIImage *) image2;
 
 @end

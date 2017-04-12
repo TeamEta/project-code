@@ -172,23 +172,23 @@ int max_y;
     cv::cvtColor(right, right_gray, CV_BGR2GRAY);
     
     //how many pixels in a square to match
-    int window_size = 5;
+    int window_size = 101;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
     cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(256, window_size);
 
-/*    //all of the below values have to do with pre filtering out noise
-    sbm->setPreFilterCap(61);
-    sbm->setPreFilterSize(15);
+    //all of the below values have to do with pre filtering out noise
+    //sbm->setPreFilterCap(61);
+    //sbm->setPreFilterSize(15);
     sbm->setMinDisparity(-39);
     
-    sbm->setTextureThreshold(1000);
+    //sbm->setTextureThreshold(1000);
     sbm->setUniquenessRatio(5);
-    sbm->setSpeckleWindowSize(10);
+    sbm->setSpeckleWindowSize(200);
     sbm->setSpeckleRange(1);
     
-    sbm->setDisp12MaxDiff(0);*/
+    //sbm->setDisp12MaxDiff(0);
     
     //compute the actual disparities
     sbm->compute(left_gray, right_gray, *disp);
@@ -287,8 +287,9 @@ int max_y;
         for(int x=0; x<disp_array->cols; x++)
         {
             value = disp_array->at<short>(y, x)/16.0;
-            if(value>maxim)
+            if(value>maxim && value < 200)
             {
+                
                 max_x = x;
                 max_y = y;
                 maxim = value;
@@ -404,13 +405,74 @@ int max_y;
     
     Mat trans = cv::getPerspectiveTransform(outputQuad, inputQuad);*/
     Mat trans;
-    rotateImage(source, result, pitch, yaw, roll, 0, 0, 1000, 1000);
+    rotateImage(source, result, pitch, yaw, roll, 0, 0, 2000, 2000);
     
     
     //cv::warpPerspective(source, result, trans, Size2i(2000,2000));
 
     
     return MatToUIImage(result);
+}
+
++(double) calculate_rectification: (UIImage *) image1 image2:(UIImage *) image2
+{
+    Mat img1, img2, gray1, gray2;
+    UIImageToMat(image1, img1);
+    UIImageToMat(image2, img2);
+    
+    int img_y = img1.rows-1;
+    int img_x = img1.cols-1;
+    
+    cv::cvtColor(img1, gray1, CV_BGR2GRAY);
+    cv::cvtColor(img2, gray2, CV_BGR2GRAY);
+    
+    int srch = 201;
+    double avg = 0.0;
+    int best_fitness = INT_MAX;
+    int value = 0;
+    for(int i=img_y/2; i<img_y-srch; i++)
+    {
+        
+        
+        for(int y=i-srch; y<i+srch; y++)
+        {
+            if(y<0)
+            {
+                y=0;
+            }
+            if(y>img_y)
+            {
+                break;
+            }
+
+            int fitness = 0;
+           
+            for(int x=0; x<img_x; x++)
+            {
+                fitness+=abs((int)img1.at<unsigned char>(i, x)-(int)img2.at<unsigned char>(y, x));
+                
+            }
+            
+            if (fitness<best_fitness && fitness!=0)
+            {
+                best_fitness = fitness;
+                value = y-i;
+            }
+            
+        }
+        if(value!=0 && value <= srch && value >= -srch)
+        {
+            if(avg == 0)
+            {
+                avg = (double)value;
+            }
+            else
+            {
+                avg=(double)(avg+value)/2.0;
+            }
+        }
+    }
+    return value;
 }
 
 @end

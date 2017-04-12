@@ -64,7 +64,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var avgYaw2 = 0.0;
     var avg = 0.0;
     
-    var distance = 0.0;
+    var distance = 0.02;
     var arm = 0.309245;
     
     var chosenPicture: Int = 0
@@ -86,7 +86,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         
         
         
-        let angle = self.avgYaw2 - self.avgYaw1;
+        
         switch chosenPicture {
         case 0:
             fatalError("No image selected, and yet a picture was taken.")
@@ -101,6 +101,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.firstPitch.text = String(format:"Pitch = %.3f", self.firstPitchVal)
             self.firstRoll.text = String(format:"Roll = %.3f", self.firstRollVal)
             self.avgYaw1 = self.avg;
+            
+             dismiss(animated: true, completion: nil)
         case 2:
             secondImage.image = selectedImage
             
@@ -113,14 +115,18 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.secondRoll.text = String(format:"Roll = %.3f", self.secondRollVal)
             
             self.avgYaw2 = self.avg;
+            let angle = acos(cos(self.avgYaw1)*cos(self.avgYaw2) + sin(self.avgYaw1)*sin(self.avgYaw2))
             
-            distance = sqrt(abs(2*arm*arm-2*arm*arm*cos(angle)));
+            
+            //distance = sqrt(abs(2*arm*arm-2*arm*arm*cos(angle)));
             self.deltaX.text = String(format:"DeltaX = %.3f, %0.3f", self.distance, angle)
             
             deltaYaw = acos(cos(firstYawVal)*cos(secondYawVal) + sin(firstYawVal)*sin(secondYawVal))
             deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
             deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
-            
+            deltaRoll = 0;
+            deltaYaw = 0;
+            deltaPitch = 0;
             if(self.firstYawVal < self.secondYawVal)
             {
                 self.sYaw = 1.0;
@@ -132,11 +138,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             if(self.firstRollVal < self.secondRollVal)
             {
-                self.sRoll = 1.0;
+                self.sRoll = -1.0;
             }
             else
             {
-                self.sRoll = -1.0;
+                self.sRoll = 1.0;
             }
             
             if(self.firstPitchVal < self.secondPitchVal)
@@ -151,15 +157,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
             secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
             
+             dismiss(animated: true, completion: nil)
+            
             var disp_map : UnsafeMutableRawPointer;
-            if(self.sPitch < 0)
-            {
+            //if(self.sPitch < 0)
+            //{
                 disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 disp_map = OpenCVWrapper.solveDisparity(secondImage.image, imageRight: firstImage.image);
-            }
+            //}
 
             /*
             if ((firstYawVal > 0 && secondYawVal > 0) // both positive
@@ -215,15 +223,20 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 firstRollVal += 2*M_PI
                 deltaRoll = abs(firstRollVal - secondRollVal)
             }*/
-            self.distanceToClosest.text = String(format:"%.3f", OpenCVWrapper.get_max_disparity(disp_map))
-            //secondImage.image = OpenCVWrapper.get_image(disp_map);
+            
+            let disp = OpenCVWrapper.get_max_disparity(disp_map)
+            let dist = OpenCVWrapper.pix_dist((Double)(OpenCVWrapper.get_max_x()), pix1y: (Double)(OpenCVWrapper.get_max_y()), pix2x: (Double)(OpenCVWrapper.get_max_x())+disp, pix2y: (Double)(OpenCVWrapper.get_max_y()), cent1x: (Double)(secondImage.image!.size.width)/2.0, cent1y: (Double)(secondImage.image!.size.height)/2.0, cent2x: (Double)(secondImage.image!.size.width)/2.0, cent2y: (Double)(secondImage.image!.size.height)/2.0, theta: 0.0004163, length: self.distance)
+            
+            let dy = OpenCVWrapper.calculate_rectification(firstImage.image, image2: secondImage.image)
+            self.distanceToClosest.text = String(format:"%.3f : %.3f", dist, dy)
+            DispImage.image = OpenCVWrapper.get_image(disp_map);
 
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
         
         // Dismiss the picker
-        dismiss(animated: true, completion: nil)
+       
     }
     
     //MARK: Actions
@@ -243,6 +256,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
         capturePhoto()
     }*/
+    @IBOutlet weak var DispImage: UIImageView!
     
     @IBAction func takePictureButtonPressed(_ sender: UIButton) {
         switch chosenPicture {
@@ -381,5 +395,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
 
         
     }
+    
+    
 }
 
