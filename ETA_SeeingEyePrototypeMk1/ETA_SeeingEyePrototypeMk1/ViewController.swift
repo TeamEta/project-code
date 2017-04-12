@@ -30,6 +30,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     @IBOutlet weak var deltaX: UILabel!
     @IBOutlet weak var distanceToClosest: UILabel!
     
+    var posx1: Double = 0
+    var posy1: Double = 0
+    
+    var posx2: Double = 0
+    var posy2: Double = 0
+    
+    
     var picturePicker: UIImagePickerController!
     
     var timeToCapture: Bool = false
@@ -64,7 +71,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var avgYaw2 = 0.0;
     var avg = 0.0;
     
-    var distance = 0.02;
+    var distance = 0.9144/2;
     var arm = 0.309245;
     
     var chosenPicture: Int = 0
@@ -80,6 +87,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
         
         // The info dictionary may contain multiple representations of the image. You want to use the original.
+        dismiss(animated: true, completion: nil)
         guard let selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage else {
             fatalError("Expected a dictionary containing an image, but was provided the following: \(info)")
         }
@@ -102,7 +110,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.firstRoll.text = String(format:"Roll = %.3f", self.firstRollVal)
             self.avgYaw1 = self.avg;
             
-             dismiss(animated: true, completion: nil)
+            
         case 2:
             secondImage.image = selectedImage
             
@@ -124,9 +132,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             deltaYaw = acos(cos(firstYawVal)*cos(secondYawVal) + sin(firstYawVal)*sin(secondYawVal))
             deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
             deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
-            deltaRoll = 0;
-            deltaYaw = 0;
-            deltaPitch = 0;
+            //deltaRoll = 0;
+            //deltaYaw = 0;
+            //deltaPitch = 0;
             if(self.firstYawVal < self.secondYawVal)
             {
                 self.sYaw = 1.0;
@@ -154,19 +162,19 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 self.sPitch = 1.0;
             }
             
-            firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
-            secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
+            //firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
+            //secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
             
-             dismiss(animated: true, completion: nil)
+             //dismiss(animated: true, completion: nil)
             
-            var disp_map : UnsafeMutableRawPointer;
+            //var disp_map : UnsafeMutableRawPointer;
             //if(self.sPitch < 0)
             //{
-                disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
+                //disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
             //}
             //else
             //{
-                disp_map = OpenCVWrapper.solveDisparity(secondImage.image, imageRight: firstImage.image);
+                //disp_map = OpenCVWrapper.solveDisparity(secondImage.image, imageRight: firstImage.image);
             //}
 
             /*
@@ -224,12 +232,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 deltaRoll = abs(firstRollVal - secondRollVal)
             }*/
             
-            let disp = OpenCVWrapper.get_max_disparity(disp_map)
-            let dist = OpenCVWrapper.pix_dist((Double)(OpenCVWrapper.get_max_x()), pix1y: (Double)(OpenCVWrapper.get_max_y()), pix2x: (Double)(OpenCVWrapper.get_max_x())+disp, pix2y: (Double)(OpenCVWrapper.get_max_y()), cent1x: (Double)(secondImage.image!.size.width)/2.0, cent1y: (Double)(secondImage.image!.size.height)/2.0, cent2x: (Double)(secondImage.image!.size.width)/2.0, cent2y: (Double)(secondImage.image!.size.height)/2.0, theta: 0.0004163, length: self.distance)
+            //let disp = OpenCVWrapper.get_max_disparity(disp_map)
+            //let dist = OpenCVWrapper.pix_dist((Double)(OpenCVWrapper.get_max_x()), pix1y: (Double)(OpenCVWrapper.get_max_y()), pix2x: (Double)(OpenCVWrapper.get_max_x())+disp, pix2y: (Double)(OpenCVWrapper.get_max_y()), cent1x: (Double)(secondImage.image!.size.width)/2.0, cent1y: (Double)(secondImage.image!.size.height)/2.0, cent2x: (Double)(secondImage.image!.size.width)/2.0, cent2y: (Double)(secondImage.image!.size.height)/2.0, theta: 0.0004163, length: self.distance)
             
-            let dy = OpenCVWrapper.calculate_rectification(firstImage.image, image2: secondImage.image)
-            self.distanceToClosest.text = String(format:"%.3f : %.3f", dist, dy)
-            DispImage.image = OpenCVWrapper.get_image(disp_map);
+            //let dy = OpenCVWrapper.calculate_rectification(firstImage.image, image2: secondImage.image)
+            
+            
+            //self.distanceToClosest.text = String(format:"%.3f : %.3f", dist, dy)
+            //DispImage.image = OpenCVWrapper.get_image(disp_map);
 
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
@@ -315,6 +325,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let tGR1 = UITapGestureRecognizer(target: self, action: #selector(image1Tapped(TGR:)))
+        firstImage.isUserInteractionEnabled = true
+        firstImage.addGestureRecognizer(tGR1)
+        
+        let tGR2 = UITapGestureRecognizer(target: self, action: #selector(image2Tapped(TGR:)))
+        secondImage.isUserInteractionEnabled = true
+        secondImage.addGestureRecognizer(tGR2)
 
         firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
         
@@ -396,6 +414,57 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         
     }
     
+    func image1Tapped(TGR: UITapGestureRecognizer)
+    {
+        
+        imageTapped(TGR: TGR, isFirst:  true)
+        
+        
+    }
+    
+    func image2Tapped(TGR: UITapGestureRecognizer)
+    {
+        
+        imageTapped(TGR: TGR, isFirst : false)
+        
+        
+    }
+    
+    //called every time the image is tapped
+    func imageTapped(TGR: UITapGestureRecognizer, isFirst first : Bool )
+    {
+        //get the point touched on the image
+        let tappedImage = TGR.view as! UIImageView
+        let touchPoint = TGR.location(in: tappedImage);
+        
+        let width = Double((tappedImage.image?.size.width)!);
+        let height = Double((tappedImage.image?.size.height)!);
+        
+        //get the scale factor from screen space to image space
+        let scalex = Double(tappedImage.frame.size.width) / width;
+        let scaley = Double(tappedImage.frame.size.height) / height;
+        
+  
+        //get the original x,y coordinates from the tapped x,y coordinates
+        let posx = Double(touchPoint.x) / scalex
+        let posy = Double(touchPoint.y) / scaley
+        
+        if(first)
+        {
+            posx1=posx
+            posy1=posy
+        }
+        else
+        {
+            posx2=posx
+            posy2=posy
+        }
+        let dist = OpenCVWrapper.pix_dist(posx1, pix1y: posy1, pix2x: posx2, pix2y: posy2, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163, length: self.distance)
+        
+        self.deltaX.text = String(format:"%.3f, %0.3f, %.3f, %.3f", posx1, posy1, posx2, posy2)
+        self.distanceToClosest.text = String(format:"%.3f : %.3f", distance, dist)
+        
+    }
     
 }
 

@@ -22,7 +22,7 @@
 +(UIImage *) get_image: (void *) mat;
 
 //returns a distance of a pixel based on Dr. Hamiltons MATLAB code
-+(double) pix_dist: (double) p1x  pix1y:(double) p1y pix2x:(double) p2x pix2y:(double) p2y cent1x:(double) c1x cent1y:(double) c1y cent2x:(double) c2x cent2y:(double) c2y theta:(double) theta length:(double) L;
++(double) pix_dist: (double) p1x  pix1y:(double) p1y pix2x:(double) p2x pix2y:(double) p2y cent1x:(double) c1x cent1y:(double) c1y cent2x:(double) c2x cent2y:(double) c2y theta:(double) theta length:(double) L delta:(double) delta
 
 //returns disparity from a disparity map range is +-2048.9374 with steps of 0.0625
 +(double) get_disparity: (void *) disp px:(double) posx py:(double) posy;

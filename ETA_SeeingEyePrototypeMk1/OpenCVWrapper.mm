@@ -250,10 +250,10 @@ int max_y;
 }
 
 //calculates pixel distance via the MATLAB formula that Dr. Hamilton came up with
-+(double) pix_dist: (double) p1x  pix1y:(double) p1y pix2x:(double) p2x pix2y:(double) p2y cent1x:(double) c1x cent1y:(double) c1y cent2x:(double) c2x cent2y:(double) c2y theta:(double) theta length:(double) L
++(double) pix_dist: (double) p1x  pix1y:(double) p1y pix2x:(double) p2x pix2y:(double) p2y cent1x:(double) c1x cent1y:(double) c1y cent2x:(double) c2x cent2y:(double) c2y theta:(double) theta length:(double) L delta:(double) delta
 {
-    double AGLx = (p1x-c1x)*theta;
-    double AGRx = (p2x-c2x)*theta;
+    double AGLx = (p1x-c1x)*theta-delta/2;
+    double AGRx = (p2x-c2x)*theta+delta/2;
     double AGLy = (p1y-c1y)*theta;
     double AGRy = (p2y-c2y)*theta;
     
