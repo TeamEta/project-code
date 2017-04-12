@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		595458A11E9C54BC00CA7389 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 595458A01E9C54BC00CA7389 /* opencv2.framework */; };
 		595458A41E9C54D900CA7389 /* OpenCVWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 595458A31E9C54D900CA7389 /* OpenCVWrapper.mm */; };
+		595458A91E9EF54A00CA7389 /* OverlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595458A81E9EF54A00CA7389 /* OverlayViewController.swift */; };
 		5977B9561E98394400E1A65E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9551E98394400E1A65E /* AppDelegate.swift */; };
 		5977B9581E98394400E1A65E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5977B9571E98394400E1A65E /* ViewController.swift */; };
 		5977B95B1E98394400E1A65E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5977B9591E98394400E1A65E /* Main.storyboard */; };
@@ -40,6 +41,7 @@
 		595458A21E9C54D000CA7389 /* OpenCVWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenCVWrapper.h; sourceTree = "<group>"; };
 		595458A31E9C54D900CA7389 /* OpenCVWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenCVWrapper.mm; sourceTree = "<group>"; };
 		595458A51E9C54DF00CA7389 /* ETA_SeeingEyePrototypeMk1-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h"; sourceTree = "<group>"; };
+		595458A81E9EF54A00CA7389 /* OverlayViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayViewController.swift; sourceTree = "<group>"; };
 		5977B9521E98394400E1A65E /* ETA_SeeingEyePrototypeMk1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ETA_SeeingEyePrototypeMk1.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5977B9551E98394400E1A65E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5977B9571E98394400E1A65E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				5977B95C1E98394400E1A65E /* Assets.xcassets */,
 				5977B95E1E98394400E1A65E /* LaunchScreen.storyboard */,
 				5977B9611E98394400E1A65E /* Info.plist */,
+				595458A81E9EF54A00CA7389 /* OverlayViewController.swift */,
 			);
 			path = ETA_SeeingEyePrototypeMk1;
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 				5977B9581E98394400E1A65E /* ViewController.swift in Sources */,
 				5977B9561E98394400E1A65E /* AppDelegate.swift in Sources */,
 				595458A41E9C54D900CA7389 /* OpenCVWrapper.mm in Sources */,
+				595458A91E9EF54A00CA7389 /* OverlayViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
