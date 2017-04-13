@@ -171,22 +171,24 @@ int max_y;
     cv::cvtColor(left, left_gray, CV_BGR2GRAY);
     cv::cvtColor(right, right_gray, CV_BGR2GRAY);
     
+    
+    
     //how many pixels in a square to match
-    int window_size = 101;
+    int window_size = 15;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
-    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(256, window_size);
+    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(128/4, window_size);
 
     //all of the below values have to do with pre filtering out noise
     //sbm->setPreFilterCap(61);
     //sbm->setPreFilterSize(15);
-    sbm->setMinDisparity(-39);
+    //sbm->setMinDisparity(-39);
     
     //sbm->setTextureThreshold(1000);
-    sbm->setUniquenessRatio(5);
-    sbm->setSpeckleWindowSize(200);
-    sbm->setSpeckleRange(1);
+    //sbm->setUniquenessRatio(5);
+    sbm->setSpeckleWindowSize(30);
+    sbm->setSpeckleRange(3);
     
     //sbm->setDisp12MaxDiff(0);
     
@@ -206,10 +208,10 @@ int max_y;
     //sgbm->setDisp12MaxDiff(1000000);
     //sgbm->setP1(24*window_size*window_size);
     //sgbm->setP2(96*window_size*window_size);
-    //sgbm->setMode(StereoSGBM::MODE_SGBM_3WAY);
+   // sgbm->setMode(StereoSGBM::MODE_SGBM_3WAY);
     //sgbm->setSpeckleRange(12);
     
-    //sgbm->compute(left_gray, right_gray, *disp);
+    //sgbm->compute(left, right, *disp);
     
     /*
     Ptr<DisparityWLSFilter> wls_filter;
@@ -473,6 +475,29 @@ int max_y;
         }
     }
     return value;
+}
+
++(UIImage*) rotate_image: (UIImage *) image1
+{
+    
+    Mat mat, sized, rotated;
+    UIImageToMat(image1, mat);
+    
+    int width = mat.cols-1;
+    int height = mat.rows-1;
+    
+    Point2i center(width/2, height/2);
+    cv::Point window(width, height);
+    
+    
+
+    Mat M = getRotationMatrix2D(center, -90, 1.0);
+    warpAffine(mat, rotated, M, window);
+    
+    resize(rotated, sized, window/10);
+    
+    
+    return MatToUIImage(sized);
 }
 
 @end
