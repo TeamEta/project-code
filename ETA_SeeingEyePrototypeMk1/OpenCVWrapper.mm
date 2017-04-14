@@ -174,11 +174,11 @@ int max_y;
     
     
     //how many pixels in a square to match
-    int window_size = 15;
+    int window_size = 21;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
-    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(128/4, window_size);
+    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(128, window_size);
 
     //all of the below values have to do with pre filtering out noise
     //sbm->setPreFilterCap(61);
@@ -274,6 +274,25 @@ int max_y;
 //returns disparity from a disparity map range is +-2048.9374 with steps of 0.0625
 +(double) get_disparity: (void *) disp px:(double) posx py:(double) posy
 {
+    if(posy<0)
+    {
+        posy = 0;
+        
+    }
+    if(posx<0)
+    {
+        posx = 0;
+        
+    }
+    
+    if(posy > ((cv::Mat *)disp)->cols-1)
+    {
+        posy = ((cv::Mat *)disp)->cols-1;
+    }
+    if(posx > ((cv::Mat *)disp)->rows-1)
+    {
+        posx = ((cv::Mat *)disp)->rows-1;
+    }
     return ((double)((cv::Mat *)disp)->at<short>(posy, posx))/((double)16);
 }
 
@@ -289,7 +308,7 @@ int max_y;
         for(int x=0; x<disp_array->cols; x++)
         {
             value = disp_array->at<short>(y, x)/16.0;
-            if(value>maxim && value < 200)
+            if(value>maxim)
             {
                 
                 max_x = x;
@@ -494,10 +513,15 @@ int max_y;
     Mat M = getRotationMatrix2D(center, -90, 1.0);
     warpAffine(mat, rotated, M, window);
     
-    resize(rotated, sized, window/10);
+    resize(rotated, sized, window/5);
     
     
     return MatToUIImage(sized);
+}
+
++(int) mat_size
+{
+    return sizeof(cv::Mat);
 }
 
 @end

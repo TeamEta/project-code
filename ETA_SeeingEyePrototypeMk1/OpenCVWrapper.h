@@ -43,4 +43,6 @@
 
 +(UIImage*) rotate_image: (UIImage *) image1;
 
++(int) mat_size;
+
 @end

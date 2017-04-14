@@ -36,6 +36,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var posx2: Double = 0
     var posy2: Double = 0
     
+    var first: Bool = true;
+
     
     var picturePicker: UIImagePickerController!
     
@@ -77,6 +79,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     var chosenPicture: Int = 0
     
+    var disp_map = UnsafeMutableRawPointer.allocate(bytes: Int(OpenCVWrapper.mat_size()), alignedTo: 1);
+    
+    
+    
     //MARK: UIImagePickerControllerDelegate
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         
@@ -113,6 +119,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             
         case 2:
+            
+            if(first)
+            {
+                disp_map.deallocate(bytes: Int(OpenCVWrapper.mat_size()), alignedTo: 1)
+                first = false;
+            }
+            else
+            {
+                OpenCVWrapper.destroy_mat(disp_map);
+            }
+            
             secondImage.image = selectedImage
             
             self.secondYawVal = self.yawVal
@@ -171,10 +188,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             firstImage.image = OpenCVWrapper.rotate_image(firstImage.image);
             secondImage.image = OpenCVWrapper.rotate_image(secondImage.image);
-            
+            //var disp_map : UnsafeMutableRawPointer;
              //dismiss(animated: true, completion: nil)
             
-            var disp_map : UnsafeMutableRawPointer;
+            //var disp_map : UnsafeMutableRawPointer;
             //if(self.sPitch < 0)
             //{
                 disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
@@ -240,7 +257,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             }*/
             
             let disp = OpenCVWrapper.get_max_disparity(disp_map);
-            let dist = OpenCVWrapper.pix_dist((Double)(OpenCVWrapper.get_max_x()), pix1y: (Double)(OpenCVWrapper.get_max_y()), pix2x: (Double)(OpenCVWrapper.get_max_x())+disp, pix2y: (Double)(OpenCVWrapper.get_max_y()), cent1x: (Double)(secondImage.image!.size.width)/2.0, cent1y: (Double)(secondImage.image!.size.height)/2.0, cent2x: (Double)(secondImage.image!.size.width)/2.0, cent2y: (Double)(secondImage.image!.size.height)/2.0, theta: 0.0004163*10, length: self.distance, delta: 0)
+            let dist = OpenCVWrapper.pix_dist((Double)(OpenCVWrapper.get_max_x()*10), pix1y: (Double)(OpenCVWrapper.get_max_y()*10), pix2x: (Double)(OpenCVWrapper.get_max_x()*10)+disp*10, pix2y: (Double)(OpenCVWrapper.get_max_y()*10), cent1x: (Double)(secondImage.image!.size.width*10)/2.0, cent1y: (Double)(secondImage.image!.size.height*10)/2.0, cent2x: (Double)(secondImage.image!.size.width*10)/2.0, cent2y: (Double)(secondImage.image!.size.height*10)/2.0, theta: 0.0004163, length: self.distance, delta: 0)
             
             //let dy = OpenCVWrapper.calculate_rectification(firstImage.image, image2: secondImage.image)
             
@@ -248,7 +265,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, dist)
             DispImage.image = OpenCVWrapper.get_image(disp_map);
             
-            OpenCVWrapper.destroy_mat(disp_map);
+            //OpenCVWrapper.destroy_mat(disp_map);
 
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
@@ -342,6 +359,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let tGR2 = UITapGestureRecognizer(target: self, action: #selector(image2Tapped(TGR:)))
         secondImage.isUserInteractionEnabled = true
         secondImage.addGestureRecognizer(tGR2)
+        
+        let tGR3 = UITapGestureRecognizer(target: self, action: #selector(image3Tapped(TGR:)))
+        DispImage.isUserInteractionEnabled = true
+        DispImage.addGestureRecognizer(tGR3)
 
         firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
         
@@ -426,7 +447,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     func image1Tapped(TGR: UITapGestureRecognizer)
     {
         
-        imageTapped(TGR: TGR, isFirst:  true)
+        imageTapped(TGR: TGR, id:  1)
         
         
     }
@@ -434,13 +455,22 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     func image2Tapped(TGR: UITapGestureRecognizer)
     {
         
-        imageTapped(TGR: TGR, isFirst : false)
+        imageTapped(TGR: TGR, id : 2)
         
         
     }
     
+    func image3Tapped(TGR: UITapGestureRecognizer)
+    {
+        
+        imageTapped(TGR: TGR, id : 3)
+        
+        
+    }
+    
+    
     //called every time the image is tapped
-    func imageTapped(TGR: UITapGestureRecognizer, isFirst first : Bool )
+    func imageTapped(TGR: UITapGestureRecognizer, id img : Int)
     {
         //get the point touched on the image
         let tappedImage = TGR.view as! UIImageView
@@ -453,25 +483,44 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let scalex = Double(tappedImage.frame.size.width) / width;
         let scaley = Double(tappedImage.frame.size.height) / height;
         
+        
   
         //get the original x,y coordinates from the tapped x,y coordinates
         let posx = Double(touchPoint.x) / scalex
         let posy = Double(touchPoint.y) / scaley
+        var dist = 0.0
         
-        if(first)
+        if(img <= 2)
         {
-            posx1=posx
-            posy1=posy
+            if(img == 1)
+            {
+                posx1=posx
+                posy1=posy
+            }
+            else
+            {
+                posx2=posx
+                posy2=posy
+            }
+            
+            dist = OpenCVWrapper.pix_dist(posx1, pix1y: posy1, pix2x: posx2, pix2y: posy2, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163*5, length: self.distance, delta: deltaYaw)
+            
+            //self.deltaX.text = String(format:"%.3f, %0.3f", deltaYawAvg, 0)
+            self.distanceToClosest.text = String(format:"%.3f : %.3f", distance, dist)
+            
         }
+        
         else
         {
-            posx2=posx
-            posy2=posy
+            //let disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
+            let disp = OpenCVWrapper.get_disparity(disp_map, px: posx, py: posy)
+            dist = OpenCVWrapper.pix_dist(posx, pix1y: posy, pix2x: posx+disp, pix2y: posy, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163, length: self.distance, delta: 0)
+            self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
+            self.deltaX.text = String(format:"%.3f, %0.3f", width, height)
         }
-        let dist = OpenCVWrapper.pix_dist(posx1, pix1y: posy1, pix2x: posx2, pix2y: posy2, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163, length: self.distance, delta: deltaYaw)
         
-        //self.deltaX.text = String(format:"%.3f, %0.3f", deltaYawAvg, 0)
-        self.distanceToClosest.text = String(format:"%.3f : %.3f", distance, dist)
+        
+        
         
     }
     
