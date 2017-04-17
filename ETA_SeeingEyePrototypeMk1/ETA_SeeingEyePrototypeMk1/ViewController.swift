@@ -11,7 +11,7 @@ import CoreMotion
 import os.log
 import Photos
 
-var globalImage: UIImage = #imageLiteral(resourceName: "defaultPhoto")
+var globalImage: UIImage? = nil
 
 class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -31,9 +31,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     @IBOutlet weak var deltaX: UILabel!
     @IBOutlet weak var distanceToClosest: UILabel!
-    
-    @IBOutlet weak var switchToDisparityMap: UIButton!
-    
+        
     var posx1: Double = 0
     var posy1: Double = 0
     
@@ -41,7 +39,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var posy2: Double = 0
     
     var first: Bool = true;
-
+    var disparityPresent = false;
+    var secondImageDisparity = false
     
     var picturePicker: UIImagePickerController!
     
@@ -135,6 +134,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             }
             
             secondImage.image = selectedImage
+            globalImage = selectedImage
+            secondImageDisparity = false
             
             self.secondYawVal = self.yawVal
             self.secondPitchVal = self.pitchVal
@@ -267,7 +268,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             
             self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
-            DispImage.image = OpenCVWrapper.get_image(disp_map);
+            
+            disparityPresent = true
+            
+            //DispImage.image = OpenCVWrapper.get_image(disp_map);
             
             //OpenCVWrapper.destroy_mat(disp_map);
 
@@ -296,12 +300,18 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
         capturePhoto()
     }*/
-    @IBOutlet weak var DispImage: UIImageView!
+    //@IBOutlet weak var DispImage: UIImageView!
     
     @IBAction func switchToDisparityMap(_ sender: UIButton) {
-        if (DispImage.image != nil)
+        if (disparityPresent && !secondImageDisparity)
         {
-            secondImage.image = DispImage.image
+            secondImageDisparity = true
+            secondImage.image = OpenCVWrapper.get_image(disp_map)
+        }
+        else if (disparityPresent && secondImageDisparity)
+        {
+            secondImageDisparity = false
+            secondImage.image = globalImage
         }
     }
     
@@ -371,9 +381,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         secondImage.isUserInteractionEnabled = true
         secondImage.addGestureRecognizer(tGR2)
         
-        let tGR3 = UITapGestureRecognizer(target: self, action: #selector(image3Tapped(TGR:)))
-        DispImage.isUserInteractionEnabled = true
-        DispImage.addGestureRecognizer(tGR3)
+        //let tGR3 = UITapGestureRecognizer(target: self, action: #selector(image3Tapped(TGR:)))
+        //DispImage.isUserInteractionEnabled = true
+        //DispImage.addGestureRecognizer(tGR3)
 
         firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
         
@@ -501,7 +511,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let posy = Double(touchPoint.y) / scaley
         var dist = 0.0
         
-        if(img <= 2)
+        if(!secondImageDisparity)
         {
             if(img == 1)
             {
