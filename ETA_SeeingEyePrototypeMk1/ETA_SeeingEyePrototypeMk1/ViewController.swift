@@ -74,13 +74,23 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var avgYaw2 = 0.0;
     var avg = 0.0;
     
+    
+    var x = 0.0;
+    var y = 0.0;
+    var z = 0.0;
+    
+    var velx = 0.0;
+    var vely = 0.0;
+    var velz = 0.0;
+    
     var distance = 0.0254;
     var arm = 0.309245;
     
-    var chosenPicture: Int = 0
+    var chosenPicture: Int = 2
     
     var disp_map = UnsafeMutableRawPointer.allocate(bytes: Int(OpenCVWrapper.mat_size()), alignedTo: 1);
     
+    var integrate = false;
     
     
     //MARK: UIImagePickerControllerDelegate
@@ -89,6 +99,17 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         //Dismiss this picker if the user cancels
         dismiss(animated: true, completion: nil)
         
+    }
+    
+    func resetDistance()
+    {
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+        
+        velx = 0.0;
+        vely = 0.0;
+        velz = 0.0;
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
@@ -119,6 +140,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             
         case 2:
+            
+            integrate = false;
             
             if(first)
             {
@@ -186,8 +209,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             //firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
             //secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
             
-            firstImage.image = OpenCVWrapper.rotate_image(firstImage.image);
-            secondImage.image = OpenCVWrapper.rotate_image(secondImage.image);
+            firstImage.image = OpenCVWrapper.rotate_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
+            secondImage.image = OpenCVWrapper.rotate_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
             //var disp_map : UnsafeMutableRawPointer;
              //dismiss(animated: true, completion: nil)
             
@@ -263,7 +286,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             
             self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
-            DispImage.image = OpenCVWrapper.get_image(disp_map);
+            //DispImage.image = OpenCVWrapper.get_image(disp_map);
+            
+            self.secondYaw.text = String(format:"X = %.3f", self.x)
+            self.secondPitch.text = String(format:"Y = %.3f", self.y)
+            self.secondRoll.text = String(format:"Z = %.3f", self.z)
             
             //OpenCVWrapper.destroy_mat(disp_map);
 
@@ -302,6 +329,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             chosenPicture = 2
         case 2:
             chosenPicture = 1
+            integrate = true;
+            resetDistance();
         default:
             fatalError("Expected chosenPicture to be updated with the picture chosen.")
         }
@@ -309,6 +338,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         self.timeToCapture = true
         
         capturePhoto()
+        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.captureDidLoad), userInfo: nil, repeats: false);
     }
     
     func capturePhoto() {
@@ -366,7 +396,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
 
         firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
         
-        manager.deviceMotionUpdateInterval = 0.1
+        manager.deviceMotionUpdateInterval = 0.01
         manager.startDeviceMotionUpdates(to: OperationQueue.main, withHandler:
             {deviceManager, error in
                 self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
@@ -431,12 +461,24 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                             
                             self.timeToCapture = false
                             
-                            Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.captureDidLoad), userInfo: nil, repeats: false);
+                            
                         }
                     }
                     
                     //self.gyroRawX.text = String(format:"Yaw = %f : Stable", yaw)
                 }
+                
+                if(self.integrate)
+                {
+                    self.velx = self.velx + (self.manager.deviceMotion?.userAcceleration.x)!*0.01;
+                    self.x = self.x + self.velx*0.01;
+                    self.vely = self.vely + (self.manager.deviceMotion?.userAcceleration.y)!*0.01;
+                    self.y = self.y + self.vely*0.01;
+                    self.velz = self.velz + (self.manager.deviceMotion?.userAcceleration.z)!*0.01;
+                    self.z = self.z + self.velz*0.01;
+                    
+                }
+                
                 //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )

@@ -47,7 +47,7 @@ void rotateImage(const Mat &input, Mat &output, double alpha, double beta, doubl
     //beta = (beta)*CV_PI/180.;
     //beta = beta-CV_PI/2;
     //gamma = (gamma)*CV_PI/180.;
-    gamma = gamma+CV_PI/2;
+    //gamma = gamma+CV_PI/2;
     
     // get width and height for ease of use in matrices
     
@@ -185,13 +185,13 @@ int max_y;
     //sbm->setPreFilterSize(15);
     //sbm->setMinDisparity(-39);
     
-    //sbm->setTextureThreshold(1000);
-    //sbm->setUniquenessRatio(5);
+    sbm->setTextureThreshold(507);
+    sbm->setUniquenessRatio(15);
     
     sbm->setSpeckleWindowSize(30);
     sbm->setSpeckleRange(12);
     
-    //sbm->setDisp12MaxDiff(0);
+    sbm->setDisp12MaxDiff(5);
     
     //compute the actual disparities
     sbm->compute(left_gray, right_gray, *disp);
@@ -498,10 +498,10 @@ int max_y;
     return value;
 }
 
-+(UIImage*) rotate_image: (UIImage *) image1
++(UIImage*) rotate_image: (UIImage *) image1 yaw: (double)yaw pitch: (double)pitch roll: (double)roll
 {
     
-    Mat mat, sized, rotated;
+    Mat mat, sized, rotated, translated;
     UIImageToMat(image1, mat);
     
     int width = mat.cols-1;
@@ -515,7 +515,9 @@ int max_y;
     Mat M = getRotationMatrix2D(center, -90, 1.0);
     warpAffine(mat, rotated, M, window);
     
-    resize(rotated, sized, window/5);
+    rotateImage(rotated, translated, pitch, yaw, roll, 0, 0, 2000, 2000);
+    
+    resize(translated, sized, window/5);
     
     
     return MatToUIImage(sized);

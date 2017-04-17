@@ -41,7 +41,7 @@
 
 +(double) calculate_rectification: (UIImage *) image1 image2:(UIImage *) image2;
 
-+(UIImage*) rotate_image: (UIImage *) image1;
++(UIImage*) rotate_image: (UIImage *) image1 yaw: (double)yaw pitch: (double)pitch roll: (double)roll;
 
 +(int) mat_size;
 
