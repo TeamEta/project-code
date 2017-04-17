@@ -11,6 +11,8 @@ import CoreMotion
 import os.log
 import Photos
 
+var globalImage: UIImage = #imageLiteral(resourceName: "defaultPhoto")
+
 class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let manager = CMMotionManager()
@@ -448,14 +450,16 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     {
         
         imageTapped(TGR: TGR, id:  1)
-        
-        
+        globalImage = self.firstImage.image!
+        //imageTapped(TGR: TGR, isFirst:  true)
     }
     
     func image2Tapped(TGR: UITapGestureRecognizer)
     {
         
         imageTapped(TGR: TGR, id : 2)
+        globalImage = self.secondImage.image!
+        //imageTapped(TGR: TGR, isFirst : false)
         
         
     }
@@ -464,8 +468,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     {
         
         imageTapped(TGR: TGR, id : 3)
-        
-        
     }
     
     
@@ -523,6 +525,5 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         
         
     }
-    
 }
 
