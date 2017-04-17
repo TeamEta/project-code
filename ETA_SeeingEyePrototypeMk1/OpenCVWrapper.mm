@@ -174,7 +174,7 @@ int max_y;
     
     
     //how many pixels in a square to match
-    int window_size = 21;
+    int window_size = 15;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
@@ -187,8 +187,9 @@ int max_y;
     
     //sbm->setTextureThreshold(1000);
     //sbm->setUniquenessRatio(5);
+    
     sbm->setSpeckleWindowSize(30);
-    sbm->setSpeckleRange(3);
+    sbm->setSpeckleRange(12);
     
     //sbm->setDisp12MaxDiff(0);
     
@@ -196,7 +197,7 @@ int max_y;
     sbm->compute(left_gray, right_gray, *disp);
     
     //slow but more information method
-    //cv::Ptr<cv::StereoSGBM> sgbm = cv::StereoSGBM::create(0, 256, window_size);
+    //cv::Ptr<cv::StereoSGBM> sgbm = cv::StereoSGBM::create(0, 128, window_size);
     
     //sgbm->setPreFilterCap(61);
     //sgbm->setPreFilterSize(5);
@@ -204,14 +205,15 @@ int max_y;
     
     //sgbm->setTextureThreshold(1000);
     //sgbm->setUniquenessRatio(0);
-    //sgbm->setSpeckleWindowSize(15);
+    //sgbm->setSpeckleWindowSize(30);
     //sgbm->setDisp12MaxDiff(1000000);
     //sgbm->setP1(24*window_size*window_size);
     //sgbm->setP2(96*window_size*window_size);
-   // sgbm->setMode(StereoSGBM::MODE_SGBM_3WAY);
+    //sgbm->setMode(StereoSGBM::MODE_SGBM_3WAY);
+    
     //sgbm->setSpeckleRange(12);
     
-    //sgbm->compute(left, right, *disp);
+    //sgbm->compute(left_gray, right_gray, *disp);
     
     /*
     Ptr<DisparityWLSFilter> wls_filter;

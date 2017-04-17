@@ -262,7 +262,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             //let dy = OpenCVWrapper.calculate_rectification(firstImage.image, image2: secondImage.image)
             
             
-            self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, dist)
+            self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
             DispImage.image = OpenCVWrapper.get_image(disp_map);
             
             //OpenCVWrapper.destroy_mat(disp_map);
