@@ -95,13 +95,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZYD-Ve-hXl">
-                                <rect key="frame" x="118" y="230" width="85" height="30"/>
-                                <state key="normal" title="Take Picture"/>
-                                <connections>
-                                    <action selector="takePictureButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zZL-0a-Eq8"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DeltaX: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="shh-lJ-UOJ">
                                 <rect key="frame" x="56" y="490" width="209" height="19"/>
                                 <constraints>
@@ -132,23 +125,31 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zk0-6s-vca">
-                                <rect key="frame" x="79" y="282" width="163" height="30"/>
+                                <rect key="frame" x="79" y="288" width="163" height="30"/>
                                 <state key="normal" title="Switch to Disparity Map"/>
                                 <connections>
                                     <action selector="switchToDisparityMap:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Bof-li-Jak"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZYD-Ve-hXl">
+                                <rect key="frame" x="118" y="236" width="85" height="30"/>
+                                <state key="normal" title="Take Picture"/>
+                                <connections>
+                                    <action selector="takePictureButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zZL-0a-Eq8"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="zk0-6s-vca" firstAttribute="top" secondItem="ZYD-Ve-hXl" secondAttribute="bottom" constant="22" id="0sT-ja-YNr"/>
                             <constraint firstItem="ZYD-Ve-hXl" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="1td-94-jr4"/>
-                            <constraint firstItem="zk0-6s-vca" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="282" id="67J-dE-a7q"/>
+                            <constraint firstItem="zk0-6s-vca" firstAttribute="top" secondItem="ZYD-Ve-hXl" secondAttribute="bottom" constant="22" id="26i-NH-5GZ"/>
+                            <constraint firstItem="oCg-9p-l8P" firstAttribute="top" secondItem="zk0-6s-vca" secondAttribute="bottom" constant="25" id="5pb-Za-E7e"/>
                             <constraint firstAttribute="bottom" secondItem="3Kc-mp-jbp" secondAttribute="bottom" constant="203" id="6y3-Wc-4A1"/>
+                            <constraint firstItem="ZYD-Ve-hXl" firstAttribute="top" secondItem="PKM-Y6-aoy" secondAttribute="bottom" constant="16" id="CPi-pr-gAu"/>
                             <constraint firstItem="shh-lJ-UOJ" firstAttribute="top" secondItem="rJo-qE-USa" secondAttribute="bottom" constant="29.5" id="Gy0-cK-AnY"/>
                             <constraint firstItem="Xsz-VM-5nL" firstAttribute="top" secondItem="ZTf-A6-f4X" secondAttribute="bottom" constant="26" id="Lkm-o1-Wbw"/>
-                            <constraint firstItem="oCg-9p-l8P" firstAttribute="top" secondItem="zk0-6s-vca" secondAttribute="bottom" constant="31" id="Lw5-oG-Ucx"/>
                             <constraint firstItem="rJo-qE-USa" firstAttribute="leading" secondItem="Xsz-VM-5nL" secondAttribute="trailing" constant="48" id="MUH-m3-N1B"/>
-                            <constraint firstItem="ZYD-Ve-hXl" firstAttribute="top" secondItem="PKM-Y6-aoy" secondAttribute="bottom" constant="30" id="Sf9-Km-xyz"/>
                             <constraint firstItem="shh-lJ-UOJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="bQI-ky-vSy"/>
                             <constraint firstItem="PKM-Y6-aoy" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="bqD-2R-yP2"/>
                             <constraint firstItem="3Kc-mp-jbp" firstAttribute="trailing" secondItem="ipx-hA-qAV" secondAttribute="trailing" id="cfP-fK-sz2"/>
@@ -156,7 +157,6 @@
                             <constraint firstItem="42j-j4-afk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dIr-6G-kPN"/>
                             <constraint firstItem="zk0-6s-vca" firstAttribute="centerX" secondItem="ZYD-Ve-hXl" secondAttribute="centerX" id="ebf-ZE-ioz"/>
                             <constraint firstItem="ipx-hA-qAV" firstAttribute="leading" secondItem="rJo-qE-USa" secondAttribute="leading" id="jtx-Ph-MaF"/>
-                            <constraint firstItem="zk0-6s-vca" firstAttribute="top" secondItem="ZYD-Ve-hXl" secondAttribute="bottom" constant="22" id="kDM-s0-yM7"/>
                             <constraint firstItem="3Kc-mp-jbp" firstAttribute="leading" secondItem="oCg-9p-l8P" secondAttribute="trailing" constant="48" id="kwh-GL-rgT"/>
                             <constraint firstItem="rJo-qE-USa" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" constant="85" id="mRW-6k-nf3"/>
                             <constraint firstItem="rJo-qE-USa" firstAttribute="top" secondItem="ipx-hA-qAV" secondAttribute="bottom" constant="25" id="nVx-vw-sMe"/>
