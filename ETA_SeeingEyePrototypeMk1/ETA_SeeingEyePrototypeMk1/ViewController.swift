@@ -11,6 +11,8 @@ import CoreMotion
 import os.log
 import Photos
 
+var globalImage: UIImage? = nil
+
 class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     let manager = CMMotionManager()
@@ -29,7 +31,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     
     @IBOutlet weak var deltaX: UILabel!
     @IBOutlet weak var distanceToClosest: UILabel!
-    
+        
     var posx1: Double = 0
     var posy1: Double = 0
     
@@ -37,7 +39,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var posy2: Double = 0
     
     var first: Bool = true;
-
+    var disparityPresent = false;
+    var secondImageDisparity = false
     
     var picturePicker: UIImagePickerController!
     
@@ -154,6 +157,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             }
             
             secondImage.image = selectedImage
+            globalImage = selectedImage
+            secondImageDisparity = false
             
             self.secondYawVal = self.yawVal
             self.secondPitchVal = self.pitchVal
@@ -286,11 +291,16 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             
             self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
+
             //DispImage.image = OpenCVWrapper.get_image(disp_map);
             
             self.secondYaw.text = String(format:"X = %.3f", self.x)
             self.secondPitch.text = String(format:"Y = %.3f", self.y)
             self.secondRoll.text = String(format:"Z = %.3f", self.z)
+            
+            disparityPresent = true
+            
+            //DispImage.image = OpenCVWrapper.get_image(disp_map);
             
             //OpenCVWrapper.destroy_mat(disp_map);
 
@@ -319,7 +329,20 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         self.secondRoll.text = String(format:"Roll = %f", self.rollVal)
         capturePhoto()
     }*/
-    @IBOutlet weak var DispImage: UIImageView!
+    //@IBOutlet weak var DispImage: UIImageView!
+    
+    @IBAction func switchToDisparityMap(_ sender: UIButton) {
+        if (disparityPresent && !secondImageDisparity)
+        {
+            secondImageDisparity = true
+            secondImage.image = OpenCVWrapper.get_image(disp_map)
+        }
+        else if (disparityPresent && secondImageDisparity)
+        {
+            secondImageDisparity = false
+            secondImage.image = globalImage
+        }
+    }
     
     @IBAction func takePictureButtonPressed(_ sender: UIButton) {
         switch chosenPicture {
@@ -390,9 +413,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         secondImage.isUserInteractionEnabled = true
         secondImage.addGestureRecognizer(tGR2)
         
-        let tGR3 = UITapGestureRecognizer(target: self, action: #selector(image3Tapped(TGR:)))
-        DispImage.isUserInteractionEnabled = true
-        DispImage.addGestureRecognizer(tGR3)
+        //let tGR3 = UITapGestureRecognizer(target: self, action: #selector(image3Tapped(TGR:)))
+        //DispImage.isUserInteractionEnabled = true
+        //DispImage.addGestureRecognizer(tGR3)
 
         firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: 0, pitch: 0, roll: 0)
         
@@ -490,14 +513,16 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     {
         
         imageTapped(TGR: TGR, id:  1)
-        
-        
+        globalImage = self.firstImage.image!
+        //imageTapped(TGR: TGR, isFirst:  true)
     }
     
     func image2Tapped(TGR: UITapGestureRecognizer)
     {
         
         imageTapped(TGR: TGR, id : 2)
+        globalImage = self.secondImage.image!
+        //imageTapped(TGR: TGR, isFirst : false)
         
         
     }
@@ -506,8 +531,6 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     {
         
         imageTapped(TGR: TGR, id : 3)
-        
-        
     }
     
     
@@ -532,7 +555,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         let posy = Double(touchPoint.y) / scaley
         var dist = 0.0
         
-        if(img <= 2)
+        if(!secondImageDisparity)
         {
             if(img == 1)
             {
@@ -565,6 +588,5 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         
         
     }
-    
 }
 
