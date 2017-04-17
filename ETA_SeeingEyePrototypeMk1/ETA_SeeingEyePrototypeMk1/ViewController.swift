@@ -32,6 +32,8 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     @IBOutlet weak var deltaX: UILabel!
     @IBOutlet weak var distanceToClosest: UILabel!
     
+    @IBOutlet weak var switchToDisparityMap: UIButton!
+    
     var posx1: Double = 0
     var posy1: Double = 0
     
@@ -295,6 +297,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         capturePhoto()
     }*/
     @IBOutlet weak var DispImage: UIImageView!
+    
+    @IBAction func switchToDisparityMap(_ sender: UIButton) {
+        if (DispImage.image != nil)
+        {
+            secondImage.image = DispImage.image
+        }
+    }
     
     @IBAction func takePictureButtonPressed(_ sender: UIButton) {
         switch chosenPicture {
