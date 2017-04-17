@@ -93,7 +93,6 @@
 				5977B9541E98394400E1A65E /* ETA_SeeingEyePrototypeMk1 */,
 				5977B9691E98394400E1A65E /* ETA_SeeingEyePrototypeMk1Tests */,
 				5977B9741E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests */,
-				5977B9531E98394400E1A65E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -105,6 +104,7 @@
 				5977B9711E98394400E1A65E /* ETA_SeeingEyePrototypeMk1UITests.xctest */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		5977B9541E98394400E1A65E /* ETA_SeeingEyePrototypeMk1 */ = {
@@ -116,6 +116,7 @@
 				5977B95C1E98394400E1A65E /* Assets.xcassets */,
 				5977B95E1E98394400E1A65E /* LaunchScreen.storyboard */,
 				5977B9611E98394400E1A65E /* Info.plist */,
+				5977B9531E98394400E1A65E /* Products */,
 				595458A81E9EF54A00CA7389 /* OverlayViewController.swift */,
 			);
 			path = ETA_SeeingEyePrototypeMk1;
