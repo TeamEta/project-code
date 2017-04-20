@@ -69,24 +69,38 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var deltaRoll: Double = 0.0
     
     var nSamples = 50
+    var nAccSample = 64
     var mVariance = 0.175
     var gyroSamples = Array<Double> ()
+    
+    var xSamples = Array<Double> ()
+    var ySamples = Array<Double> ()
+    var zSamples = Array<Double> ()
+    
     var stable = false;
     
     var avgYaw1 = 0.0;
     var avgYaw2 = 0.0;
     var avg = 0.0;
     
+    var ax = 0.0;
+    var ay = 0.0;
+    var az = 0.0;
     
     var x = 0.0;
     var y = 0.0;
     var z = 0.0;
     
+    
+    var avgx = 0.0;
+    var avgy = 0.0;
+    var avgz = 0.0;
+    
     var velx = 0.0;
     var vely = 0.0;
     var velz = 0.0;
     
-    var distance = 0.0254;
+    var distance = 0.1172;
     var arm = 0.309245;
     
     var chosenPicture: Int = 2
@@ -157,16 +171,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             }
             
             secondImage.image = selectedImage
-            globalImage = selectedImage
+            //globalImage = selectedImage
             secondImageDisparity = false
             
             self.secondYawVal = self.yawVal
             self.secondPitchVal = self.pitchVal
             self.secondRollVal = self.rollVal
             
-            self.secondYaw.text = String(format:"Yaw = %.3f", self.secondYawVal)
-            self.secondPitch.text = String(format:"Pitch = %.3f", self.secondPitchVal)
-            self.secondRoll.text = String(format:"Roll = %.3f", self.secondRollVal)
+            
             
             self.avgYaw2 = self.avg;
             let angle = acos(cos(self.avgYaw1)*cos(self.avgYaw2) + sin(self.avgYaw1)*sin(self.avgYaw2))
@@ -178,8 +190,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             deltaYaw = acos(cos(firstYawVal)*cos(secondYawVal) + sin(firstYawVal)*sin(secondYawVal))
             deltaPitch = acos(cos(firstPitchVal)*cos(secondPitchVal) + sin(firstPitchVal)*sin(secondPitchVal))
             deltaRoll = acos(cos(firstRollVal)*cos(secondRollVal) + sin(firstRollVal)*sin(secondRollVal))
+            
+            
+            self.secondYaw.text = String(format:"dYaw = %.3f", deltaYaw)
+            self.secondPitch.text = String(format:"dPitch = %.3f", deltaPitch)
+            self.secondRoll.text = String(format:"dRoll = %.3f", deltaRoll)
             //deltaRoll = 0;
-            deltaYaw = 0;
+            //deltaYaw = 0;
             //deltaPitch = 0;
             
             deltaYawAvg = 0;
@@ -214,8 +231,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             //firstImage.image = OpenCVWrapper.transform_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
             //secondImage.image = OpenCVWrapper.transform_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
             
-            firstImage.image = OpenCVWrapper.rotate_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/8, roll: self.sRoll*deltaRoll/8);
-            secondImage.image = OpenCVWrapper.rotate_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/8, roll: -self.sRoll*deltaRoll/8);
+            firstImage.image = OpenCVWrapper.rotate_image(firstImage.image, yaw: self.sYaw*deltaYaw/8, pitch: self.sPitch*deltaPitch/2, roll: self.sRoll*deltaRoll/2);
+            secondImage.image = OpenCVWrapper.rotate_image(secondImage.image, yaw: -self.sYaw*deltaYaw/8, pitch: -self.sPitch*deltaPitch/2, roll: -self.sRoll*deltaRoll/2);
+            globalImage = secondImage.image
             //var disp_map : UnsafeMutableRawPointer;
              //dismiss(animated: true, completion: nil)
             
@@ -294,9 +312,9 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
 
             //DispImage.image = OpenCVWrapper.get_image(disp_map);
             
-            self.secondYaw.text = String(format:"X = %.3f", self.x)
-            self.secondPitch.text = String(format:"Y = %.3f", self.y)
-            self.secondRoll.text = String(format:"Z = %.3f", self.z)
+            //self.secondYaw.text = String(format:"X = %.3f", self.x)
+            //self.secondPitch.text = String(format:"Y = %.3f", self.y)
+            //self.secondRoll.text = String(format:"Z = %.3f", self.z)
             
             disparityPresent = true
             
@@ -332,10 +350,14 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     //@IBOutlet weak var DispImage: UIImageView!
     
     @IBAction func switchToDisparityMap(_ sender: UIButton) {
+        let localImage: UIImage? = firstImage.image
+        
         if (disparityPresent && !secondImageDisparity)
         {
             secondImageDisparity = true
             secondImage.image = OpenCVWrapper.get_image(disp_map)
+            firstImage.image = OpenCVWrapper.get_image(disp_map)
+            firstImage.image = localImage
         }
         else if (disparityPresent && secondImageDisparity)
         {
@@ -422,10 +444,50 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
         manager.deviceMotionUpdateInterval = 0.01
         manager.startDeviceMotionUpdates(to: OperationQueue.main, withHandler:
             {deviceManager, error in
-                self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
-                self.pitchVal = (self.manager.deviceMotion?.attitude.pitch)!
-                self.rollVal = (self.manager.deviceMotion?.attitude.roll)!
-
+                //self.yawVal = (self.manager.deviceMotion?.attitude.yaw)!
+                //self.pitchVal = (self.manager.deviceMotion?.attitude.pitch)!
+                //self.rollVal = (self.manager.deviceMotion?.attitude.roll)!
+                
+                //ok time to be crazy and use quaternions
+                let quat : CMQuaternion = (self.manager.deviceMotion?.attitude.quaternion)!;
+                
+                self.yawVal = atan2(2*(quat.x*quat.y + quat.z*quat.w), 1 - 2*(quat.y*quat.y + quat.z*quat.z));
+                self.pitchVal = atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*(quat.z*quat.z + quat.w * quat.w));
+                self.rollVal = asin(2*(quat.x*quat.z - quat.w*quat.y));
+                
+                let iax = self.avgx
+                let iay = self.avgy
+                let iaz = self.z
+                let ivy = self.vely
+                let ivx = self.velx
+                let ivz = self.velz
+                let ipx = self.x
+                let ipy = self.y
+                let ipz = self.z
+                
+                //calculate global acceleration values
+                let matr = (self.manager.deviceMotion?.attitude.rotationMatrix)!
+                var lax = (self.manager.deviceMotion?.userAcceleration.x)!
+                var lay = (self.manager.deviceMotion?.userAcceleration.y)!
+                var laz = (self.manager.deviceMotion?.userAcceleration.z)!
+                var gax = lax*matr.m11 + lay*matr.m21 + laz*matr.m31;
+                var gay = lax*matr.m12 + lay*matr.m22 + laz*matr.m32;
+                var gaz = lax*matr.m13 + lay*matr.m23 + laz*matr.m33;
+                
+                
+                if(lax < 0.1 && lax > -0.1)
+                {
+                    lax = 0
+                }
+                if(lay < 0.1 && lay > -0.1)
+                {
+                    lay = 0
+                }
+                if(laz < 0.1 && laz > -0.1)
+                {
+                    laz = 0
+                }
+                
                 
                 let yaw = self.yawVal;
                 
@@ -435,11 +497,74 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 {
                     self.gyroSamples.remove(at: 0)
                 }
+                
+                self.xSamples.append(lax)
+                if(self.xSamples.count > self.nAccSample)
+                {
+                    self.xSamples.remove(at: 0)
+                }
+                self.ySamples.append(lay)
+                if(self.ySamples.count > self.nAccSample)
+                {
+                    self.ySamples.remove(at: 0)
+                }
+                self.zSamples.append(laz)
+                if(self.zSamples.count > self.nAccSample)
+                {
+                    self.zSamples.remove(at: 0)
+                }
+                
+                
                 var sMax = abs(self.gyroSamples[0])
                 var sMin = abs(self.gyroSamples[0])
                 var avg = 0.0
+                self.avgx = self.xSamples[0];
+                self.avgy = self.ySamples[0];
+                self.avgz = self.zSamples[0];
                 
                 var o = 0.0
+                
+                var cx = 0;
+                var cy = 0;
+                var cz = 0;
+                
+                for i in 1..<self.ySamples.count
+                {
+                    if(self.avgx == 0)
+                    {
+                        cx += 1;
+                    }
+                    if(self.avgy == 0)
+                    {
+                        cy += 1;
+                    }
+                    if(self.avgz == 0)
+                    {
+                        cz += 1;
+                    }
+                    
+                    self.avgx += self.xSamples[i]
+                    self.avgy += self.ySamples[i]
+                    self.avgz += self.zSamples[i]
+                }
+                
+                self.avgx = self.avgx/Double(self.nAccSample);
+                self.avgy = self.avgy/Double(self.nAccSample);
+                self.avgz = self.avgz/Double(self.nAccSample);
+                
+                if(cx >= 25)
+                {
+                    self.velx = 0
+                }
+                if(cy >= 25)
+                {
+                    self.vely = 0
+                }
+                if(cz >= 25)
+                {
+                    self.velz = 0
+                }
+                
                 for i in self.gyroSamples
                 {
                     o = i
@@ -490,18 +615,30 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                     
                     //self.gyroRawX.text = String(format:"Yaw = %f : Stable", yaw)
                 }
+
                 
                 if(self.integrate)
                 {
-                    self.velx = self.velx + (self.manager.deviceMotion?.userAcceleration.x)!*0.01;
-                    self.x = self.x + self.velx*0.01;
-                    self.vely = self.vely + (self.manager.deviceMotion?.userAcceleration.y)!*0.01;
-                    self.y = self.y + self.vely*0.01;
-                    self.velz = self.velz + (self.manager.deviceMotion?.userAcceleration.z)!*0.01;
-                    self.z = self.z + self.velz*0.01;
+                    
+                    let dt = 0.01
+                    self.velx = ivx + iax + (self.avgx - iax/2)
+                    self.vely = ivy + iay + (self.avgy - iay/2)
+                    self.velx = ivz + iaz + (self.avgz - iaz/2)
+                    
+                    self.x = ipx + ivx + (self.velx - ivx/2)
+                    self.y = ipy + ivy + (self.vely - ivy/2)
+                    self.z = ipz + ivz + (self.velz - ivz/2)
+                    
                     
                 }
                 
+                let deltaYaw = acos(cos(self.firstYawVal)*cos(self.yawVal) + sin(self.firstYawVal)*sin(self.yawVal))
+                let deltaPitch = acos(cos(self.firstPitchVal)*cos(self.pitchVal) + sin(self.firstPitchVal)*sin(self.pitchVal))
+                let deltaRoll = acos(cos(self.firstRollVal)*cos(self.rollVal) + sin(self.firstRollVal)*sin(self.rollVal))
+                
+                self.firstYaw.text = String(format:"Yaw = %.3f", deltaYaw)
+                self.firstPitch.text = String(format:"Pitch = %.3f", deltaPitch)
+                self.firstRoll.text = String(format:"Roll = %.3f", deltaRoll)
                 //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )
@@ -568,7 +705,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 posy2=posy
             }
             
-            dist = OpenCVWrapper.pix_dist(posx1, pix1y: posy1, pix2x: posx2, pix2y: posy2, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163*5, length: self.distance, delta: deltaYaw)
+            dist = OpenCVWrapper.pix_dist(posx1, pix1y: posy1, pix2x: posx2, pix2y: posy2, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163*5, length: 0.09, delta: 0)
             
             //self.deltaX.text = String(format:"%.3f, %0.3f", deltaYawAvg, 0)
             self.distanceToClosest.text = String(format:"%.3f : %.3f", distance, dist)
@@ -580,8 +717,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             //let disp_map = OpenCVWrapper.solveDisparity(firstImage.image, imageRight: secondImage.image);
             let disp = OpenCVWrapper.get_disparity(disp_map, px: posx, py: posy)
             dist = OpenCVWrapper.pix_dist(posx, pix1y: posy, pix2x: posx+disp, pix2y: posy, cent1x: width/2.0, cent1y: height/2.0, cent2x: width/2.0, cent2y: height/2.0, theta: 0.0004163, length: self.distance, delta: 0)
-            self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, 440.0/disp)
-            self.deltaX.text = String(format:"%.3f, %0.3f", width, height)
+            //self.distanceToClosest.text = String(format:"%.3f : %.3f", disp, (440.0/disp)*0.31)
+            //self.deltaX.text = String(format:"%.3f, %0.3f", width, height)
+            self.distanceToClosest.text = String(format:"Distance: %.3f", (665.529*distance/disp))
+            self.deltaX.text = String(format:"Pixel Delta: %0.3f", disp)
         }
         
         

@@ -5,6 +5,8 @@
 //  Created by Micah on 2/1/17.
 //  Copyright © 2017 Engineering. All rights reserved.
 //
+
+//.31 m = 1 Mfoot
 #import "opencv2/opencv.hpp"
 #import "OpenCVWrapper.h"
 #import "opencv2/imgcodecs/ios.h"
@@ -174,11 +176,11 @@ int max_y;
     
     
     //how many pixels in a square to match
-    int window_size = 15;
+    int window_size = 21;
     //int scl_fact = window_size*window_size;
     
     //fast method with search up to 256 pixels
-    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(128, window_size);
+    cv::Ptr<cv::StereoBM> sbm = cv::StereoBM::create(96, window_size);
 
     //all of the below values have to do with pre filtering out noise
     //sbm->setPreFilterCap(61);
@@ -501,21 +503,24 @@ int max_y;
 +(UIImage*) rotate_image: (UIImage *) image1 yaw: (double)yaw pitch: (double)pitch roll: (double)roll
 {
     
-    Mat mat, sized, rotated, translated;
+    Mat mat, sized, rotated, rotated2, translated;
     UIImageToMat(image1, mat);
     
     int width = mat.cols-1;
     int height = mat.rows-1;
     
     Point2i center(width/2, height/2);
+    Point2i otherCenter(width/2, height/2);
     cv::Point window(width, height);
     
     
 
     Mat M = getRotationMatrix2D(center, -90, 1.0);
+    Mat M2 = getRotationMatrix2D(otherCenter, roll/M_PI*180, 1.0);
     warpAffine(mat, rotated, M, window);
+    warpAffine(rotated, rotated2, M2, window);
     
-    rotateImage(rotated, translated, pitch, yaw, roll, 0, 0, 2000, 2000);
+    rotateImage(rotated2, translated, pitch, yaw, 0, 0, 0, 2000, 2000);
     
     resize(translated, sized, window/5);
     

@@ -208,7 +208,7 @@
 				TargetAttributes = {
 					5977B9511E98394400E1A65E = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 7Z42KAVL8N;
+						DevelopmentTeam = WTL4ZUPB2P;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
@@ -434,14 +434,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 7Z42KAVL8N;
+				DEVELOPMENT_TEAM = WTL4ZUPB2P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = ETA_SeeingEyePrototypeMk1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ServantEngineeringEta.ETA-SeeingEyePrototypeMk1";
+				PRODUCT_BUNDLE_IDENTIFIER = MCole.Sandbox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -454,14 +454,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = 7Z42KAVL8N;
+				DEVELOPMENT_TEAM = WTL4ZUPB2P;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = ETA_SeeingEyePrototypeMk1/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ServantEngineeringEta.ETA-SeeingEyePrototypeMk1";
+				PRODUCT_BUNDLE_IDENTIFIER = MCole.Sandbox;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "ETA_SeeingEyePrototypeMk1-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
