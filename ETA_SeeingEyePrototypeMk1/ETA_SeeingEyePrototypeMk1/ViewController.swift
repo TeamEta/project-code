@@ -100,7 +100,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var vely = 0.0;
     var velz = 0.0;
     
-    var distance = 0.1172;
+    //how far the human is suppose to move the camera
+    let expect_distance = 0.0586;
+    var distance = 0.0;
+    
+    
+    //how much to trust the sensor readings
+    let trust = 0.10
+    //how much the human is expected to err by
+    let error = 0.10
     var arm = 0.309245;
     
     var chosenPicture: Int = 2
@@ -108,7 +116,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     var disp_map = UnsafeMutableRawPointer.allocate(bytes: Int(OpenCVWrapper.mat_size()), alignedTo: 1);
     
     var integrate = false;
-    
+    var lastTime = 0.0;
     
     //MARK: UIImagePickerControllerDelegate
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -158,6 +166,13 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
         case 2:
             
+            distance = (-x * trust) + (expect_distance * (1.0-trust))
+            if(distance > expect_distance + expect_distance*error || distance < expect_distance - expect_distance*error )
+            {
+                distance = expect_distance;
+            }
+            
+            
             integrate = false;
             
             if(first)
@@ -168,6 +183,11 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             else
             {
                 OpenCVWrapper.destroy_mat(disp_map);
+            }
+            
+            if(x>0)
+            {
+                distance = expect_distance
             }
             
             secondImage.image = selectedImage
@@ -194,7 +214,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
             
             self.secondYaw.text = String(format:"dYaw = %.3f", deltaYaw)
             self.secondPitch.text = String(format:"dPitch = %.3f", deltaPitch)
-            self.secondRoll.text = String(format:"dRoll = %.3f", deltaRoll)
+            self.secondRoll.text = String(format:"dRoll = %.3f", distance)
             //deltaRoll = 0;
             //deltaYaw = 0;
             //deltaPitch = 0;
@@ -455,12 +475,12 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 self.pitchVal = atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*(quat.z*quat.z + quat.w * quat.w));
                 self.rollVal = asin(2*(quat.x*quat.z - quat.w*quat.y));
                 
-                let iax = self.avgx
-                let iay = self.avgy
-                let iaz = self.z
-                let ivy = self.vely
-                let ivx = self.velx
-                let ivz = self.velz
+                var iax = self.avgx
+                var iay = self.avgy
+                var iaz = self.avgz
+                var ivy = self.vely
+                var ivx = self.velx
+                var ivz = self.velz
                 let ipx = self.x
                 let ipy = self.y
                 let ipz = self.z
@@ -470,20 +490,18 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 var lax = (self.manager.deviceMotion?.userAcceleration.x)!
                 var lay = (self.manager.deviceMotion?.userAcceleration.y)!
                 var laz = (self.manager.deviceMotion?.userAcceleration.z)!
-                var gax = lax*matr.m11 + lay*matr.m21 + laz*matr.m31;
-                var gay = lax*matr.m12 + lay*matr.m22 + laz*matr.m32;
-                var gaz = lax*matr.m13 + lay*matr.m23 + laz*matr.m33;
                 
                 
-                if(lax < 0.1 && lax > -0.1)
+                
+                if(lax < 0.01 && lax > -0.01)
                 {
                     lax = 0
                 }
-                if(lay < 0.1 && lay > -0.1)
+                if(lay < 0.01 && lay > -0.01)
                 {
                     lay = 0
                 }
-                if(laz < 0.1 && laz > -0.1)
+                if(laz < 0.01 && laz > -0.01)
                 {
                     laz = 0
                 }
@@ -530,15 +548,15 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 
                 for i in 1..<self.ySamples.count
                 {
-                    if(self.avgx == 0)
+                    if(self.xSamples[i] == 0)
                     {
                         cx += 1;
                     }
-                    if(self.avgy == 0)
+                    if(self.ySamples[i] == 0)
                     {
                         cy += 1;
                     }
-                    if(self.avgz == 0)
+                    if(self.zSamples[i] == 0)
                     {
                         cz += 1;
                     }
@@ -548,21 +566,24 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                     self.avgz += self.zSamples[i]
                 }
                 
-                self.avgx = self.avgx/Double(self.nAccSample);
-                self.avgy = self.avgy/Double(self.nAccSample);
-                self.avgz = self.avgz/Double(self.nAccSample);
+                self.avgx = 9.81*self.avgx/Double(self.nAccSample);
+                self.avgy = 9.81*self.avgy/Double(self.nAccSample);
+                self.avgz = 9.81*self.avgz/Double(self.nAccSample);
                 
                 if(cx >= 25)
                 {
                     self.velx = 0
+                    ivx = 0;
                 }
                 if(cy >= 25)
                 {
                     self.vely = 0
+                    ivy = 0;
                 }
                 if(cz >= 25)
                 {
                     self.velz = 0
+                    ivz = 0;
                 }
                 
                 for i in self.gyroSamples
@@ -620,15 +641,34 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 if(self.integrate)
                 {
                     
-                    let dt = 0.01
-                    self.velx = ivx + iax + (self.avgx - iax/2)
+                    var gax = iax*matr.m11 + iay*matr.m21 + iaz*matr.m31;
+                    var gay = iax*matr.m12 + iay*matr.m22 + iaz*matr.m32;
+                    var gaz = iax*matr.m13 + iay*matr.m23 + iaz*matr.m33;
+                    gax = gax * 9.81
+                    gay = gay * 9.81
+                    gaz = gaz * 9.81
+                    
+                    //iax = iax
+                    //iay = iay
+                    //iaz = iaz
+                    
+                    
+                    let dt = (self.manager.deviceMotion?.timestamp)! - self.lastTime;
+                    /*self.velx = ivx + iax + (self.avgx - iax/2)
                     self.vely = ivy + iay + (self.avgy - iay/2)
                     self.velx = ivz + iaz + (self.avgz - iaz/2)
                     
                     self.x = ipx + ivx + (self.velx - ivx/2)
                     self.y = ipy + ivy + (self.vely - ivy/2)
-                    self.z = ipz + ivz + (self.velz - ivz/2)
+                    self.z = ipz + ivz + (self.velz - ivz/2)*/
                     
+                    self.velx = ivx + (self.avgx + iax)/2*dt;
+                    self.x = ipx + (self.velx + ivx)/2*dt;
+                    
+                    self.vely = ivy + (self.avgy + iay)/2*dt;
+                    self.y = ipy + (self.vely + ivy)/2*dt;
+                    self.velz = ivz + (self.avgz + iaz)/2*dt;
+                    self.z = ipz + (self.velz + ivz)/2*dt;
                     
                 }
                 
@@ -636,9 +676,10 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
                 let deltaPitch = acos(cos(self.firstPitchVal)*cos(self.pitchVal) + sin(self.firstPitchVal)*sin(self.pitchVal))
                 let deltaRoll = acos(cos(self.firstRollVal)*cos(self.rollVal) + sin(self.firstRollVal)*sin(self.rollVal))
                 
-                self.firstYaw.text = String(format:"Yaw = %.3f", deltaYaw)
-                self.firstPitch.text = String(format:"Pitch = %.3f", deltaPitch)
-                self.firstRoll.text = String(format:"Roll = %.3f", deltaRoll)
+                self.firstYaw.text = String(format:"Yaw = %.3f", self.x)
+                self.firstPitch.text = String(format:"Pitch = %.3f", self.y)
+                self.firstRoll.text = String(format:"Roll = %.3f", self.z)
+                self.lastTime = (self.manager.deviceMotion?.timestamp)!
                 //self.firstYaw.text = String(format:"Yaw = %.3f", (self.manager.deviceMotion?.attitude.yaw)!)
         }
         )
